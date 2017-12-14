@@ -1,0 +1,370 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="陈锴鑫">
+  
+  
+  
+  
+    <meta name="description" content="工具准备1、安装PLSQL，使用默认安装即可2、下载instantClient,需要使用相应位的，32位和64位是不匹配
+network配置1、在下载的instantClient文件夹(包含oci.dll文件)内新建network文件夹2、在network文件夹内新家ADMIN文件夹。并在里面新建tnsnames.ora文件。3、tnsnames.ora是客户端用来识别服务器的文件4、tns...">
+  
+  <title>PLSQL远程连接Oracle数据库 [ 陈锴鑫 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/12/11/QuickSort/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        快速排序
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/12/11/MySQL索引数据结构/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        MySQL索引数据结构
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="/images/casper.png"/>
+          <div id="homelink">陈锴鑫</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/chenkaixin01">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>PLSQL远程连接Oracle数据库</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-12-11</span>
+      
+        <span id = "post-title-updated">修改于 2017-11-05</span>
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/categories/数据库/">数据库</a>
+      
+        
+          /
+        
+        
+        <a href="/categories/数据库/Oracle/">Oracle</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/数据库/">数据库</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/Oracle/">Oracle</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/远程连接/">远程连接</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/PLSQL/">PLSQL</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="工具准备"><a href="#工具准备" class="headerlink" title="工具准备"></a>工具准备</h3><p>1、安装<a href="http://download.csdn.net/download/qq_34332035/10046726" target="_blank" rel="external">PLSQL</a>，使用默认安装即可<br>2、下载<a href="http://pan.baidu.com/s/1o8dwlBk" target="_blank" rel="external">instantClient</a>,需要使用相应位的，32位和64位是不匹配</p>
+<h3 id="network配置"><a href="#network配置" class="headerlink" title="network配置"></a>network配置</h3><p>1、在下载的instantClient文件夹(包含oci.dll文件)内新建network文件夹<br>2、在network文件夹内新家ADMIN文件夹。并在里面新建tnsnames.ora文件。<br>3、tnsnames.ora是客户端用来识别服务器的文件<br>4、tnsnames.ora的内容<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">orcl = </div><div class="line">  (DESCRIPTION = </div><div class="line">    (ADDRESS_LIST = </div><div class="line">      (ADDRESS = (PROTOCOL = TCP)(HOST = Oracle服务器地址)(PORT = Oracle服务器开放的端口号，默认为1521)) </div><div class="line">    ) </div><div class="line">    (CONNECT_DATA = </div><div class="line">      (SERVICE_NAME = Oracle服务器的服务名) </div><div class="line">    ) </div><div class="line">  )</div></pre></td></tr></table></figure></p>
+<h3 id="环境变量配置"><a href="#环境变量配置" class="headerlink" title="环境变量配置"></a>环境变量配置</h3><p>右键此电脑——&gt;属性——&gt;高级系统设置——&gt;环境变量<br>1、在系统变量中新建变量：变量名为NLS_LANG；值为AMERICAN_AMERICA.AL32UTF8。<br>   这是为了配置编译为UTF-8，减少乱码的可能<br>2、在系统变量中新建变量：变量名为TNS_ADMIN；值为ADMIN文件夹的路径。。。\network\ADMIN；</p>
+<h3 id="oci配置"><a href="#oci配置" class="headerlink" title="oci配置"></a>oci配置</h3><p>通过不登陆方式进入PLSQL<br>工具——&gt;首选项——&gt;连接<br><img src="/images/oci.png" alt="oci"><br>1、在Oracle主目录中添加instantclient的路径，要包含network和oci.dll<br>2、在oci中添加oci路径<br>3、最后应用，确定</p>
+<h3 id="重启PLSQL"><a href="#重启PLSQL" class="headerlink" title="重启PLSQL"></a>重启PLSQL</h3>
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#工具准备"><span class="toc-text">工具准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#network配置"><span class="toc-text">network配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#环境变量配置"><span class="toc-text">环境变量配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#oci配置"><span class="toc-text">oci配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#重启PLSQL"><span class="toc-text">重启PLSQL</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/12/11/QuickSort/" class="prev">&larr; 上一篇 快速排序</a>
+  
+
+  
+
+  
+    <a href="/2017/12/11/MySQL索引数据结构/" class="next">下一篇 MySQL索引数据结构 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by 陈锴鑫 using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/images/casper.png">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/chenkaixin01">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/qq_34332035/">
+        
+          CSDN
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

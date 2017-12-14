@@ -1,0 +1,366 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="陈锴鑫">
+  
+  
+  
+  
+    <meta name="description" content="概念与基本原理CAS 全名叫Compare　And Swap 即比较并交换 。CAS方法包含三个操作数（内存地址，预期值，新值）当内存地址中的值与预期值相符，则将内存地址中的值替换为新值。在多线程的情况中，CAS实现了自旋锁，CPU给CAS一定的时间，在这段时间内，如果符合条件则执行程序，否则放弃。 CAS是原子性的 
+Java中的CASJava利用CPU的CAS指令，同时借助JNI来完成J...">
+  
+  <title>CAS [ 陈锴鑫 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/12/11/Collections.synchronizedMap/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        Collections.synchronizedMap
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/12/11/BucketSort/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        桶排序
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="/images/casper.png"/>
+          <div id="homelink">陈锴鑫</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/chenkaixin01">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>CAS</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-12-11</span>
+      
+        <span id = "post-title-updated">修改于 2017-09-21</span>
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/categories/多线程/">多线程</a>
+      
+        
+          /
+        
+        
+        <a href="/categories/多线程/锁/">锁</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/多线程/">多线程</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/unsafe/">unsafe</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/cas/">cas</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="概念与基本原理"><a href="#概念与基本原理" class="headerlink" title="概念与基本原理"></a>概念与基本原理</h3><p>CAS 全名叫Compare　And Swap 即比较并交换 。CAS方法包含三个操作数（内存地址，预期值，新值）当内存地址中的值与预期值相符，则将内存地址中的值替换为新值。在多线程的情况中，CAS实现了自旋锁，CPU给CAS一定的时间，在这段时间内，如果符合条件则执行程序，否则放弃。<br><strong> CAS是原子性的 </strong></p>
+<h3 id="Java中的CAS"><a href="#Java中的CAS" class="headerlink" title="Java中的CAS"></a>Java中的CAS</h3><p>Java利用CPU的CAS指令，同时借助JNI来完成Java的非阻塞算法。其他的原子操作都是利用类似的特性完成的。而整个J.U.C都是建立在CAS之上的，因此synchronized阻塞算法，J.U.C在性能上有了很大的提升。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * this： 对象</div><div class="line"> * valueOffset：偏移量</div><div class="line"> * expect：预期值</div><div class="line"> * update：新值</div><div class="line"> * this+valueOffset能定位到内存地址</div><div class="line"> */</div><div class="line">sun.unsafe.compareAndSwapInt(this, valueOffset, expect, update);</div><div class="line"></div><div class="line">类似：</div><div class="line"></div><div class="line"><span class="keyword">if</span> (this == expect) &#123;</div><div class="line"></div><div class="line">  this = update</div><div class="line"></div><div class="line"> <span class="built_in">return</span> <span class="literal">true</span>;</div><div class="line"></div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line"></div><div class="line"><span class="built_in">return</span> <span class="literal">false</span>;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="CAS的缺点"><a href="#CAS的缺点" class="headerlink" title="CAS的缺点"></a>CAS的缺点</h3><h4 id="1、ABA问题"><a href="#1、ABA问题" class="headerlink" title="1、ABA问题"></a>1、ABA问题</h4><p>问题：因为CAS在操作值时检查值是否发生变化，如果没有则操作。如果将一个值从A改成B，有从B改成A，那么使用CAS检查时会发现值没变，而实际上值改变了。<br>解决：CAS每次更改值时，添加一个版本号，每次更改是还应该检查版本号是否正确</p>
+<h4 id="2、循环时间大"><a href="#2、循环时间大" class="headerlink" title="2、循环时间大"></a>2、循环时间大</h4><p>问题：如果自旋锁CAS长时间不成功的话会对CPU造成很大的压力<br>解决：如果JVM支持处理器提供的pause效率会有一定的提升。pause有两个功能，第一：延迟流水线的指令，使CPU不会过多的消耗执行资源，第二：可以避免在退出循环时，因内存顺序冲突，引起CPU流水被清空，提高CPU的效率。</p>
+<h4 id="3、只能保证一个变量的原子性"><a href="#3、只能保证一个变量的原子性" class="headerlink" title="3、只能保证一个变量的原子性"></a>3、只能保证一个变量的原子性</h4><p>问题：当对一个共享变量执行操作时，我们可以使用循环CAS的方式来保证原子操作，但是对多个共享变量操作时，循环CAS就无法保证操作的原子性<br>解决：JDK1.5后可以使用AtomicReference类来保证引用对象之间的原子性，可以将多个变量放到一个对象中使用CAS操作。</p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念与基本原理"><span class="toc-text">概念与基本原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java中的CAS"><span class="toc-text">Java中的CAS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CAS的缺点"><span class="toc-text">CAS的缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、ABA问题"><span class="toc-text">1、ABA问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、循环时间大"><span class="toc-text">2、循环时间大</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、只能保证一个变量的原子性"><span class="toc-text">3、只能保证一个变量的原子性</span></a></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/12/11/Collections.synchronizedMap/" class="prev">&larr; 上一篇 Collections.synchronizedMap</a>
+  
+
+  
+
+  
+    <a href="/2017/12/11/BucketSort/" class="next">下一篇 桶排序 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by 陈锴鑫 using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/images/casper.png">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/chenkaixin01">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/qq_34332035/">
+        
+          CSDN
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

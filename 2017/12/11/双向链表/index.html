@@ -1,0 +1,364 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="陈锴鑫">
+  
+  
+  
+  
+    <meta name="description" content="理解双向链表是链表中的一种，java中的LinkedList实现的就是双向链表。双向链表与单链表相比，多了一个前驱指针，使得链表的操纵更为方便。
+到双向链表这，用包菜来比喻链表已经是不合适了。在我的理解中双向链表是的节点是一个小球，这个小球有前后两个环，一个环是前驱指针 Node pre;一个环是后向指针 Node next,如果有新的元素加入链表，那么这个小球的next环就会勾住新进来的球...">
+  
+  <title>双向链表 [ 陈锴鑫 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/12/11/多线程/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        多线程
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/12/11/单链表/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        单链表
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="/images/casper.png"/>
+          <div id="homelink">陈锴鑫</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/chenkaixin01">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>双向链表</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-12-11</span>
+      
+        <span id = "post-title-updated">修改于 2017-09-21</span>
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/categories/数据结构/">数据结构</a>
+      
+        
+          /
+        
+        
+        <a href="/categories/数据结构/线性表/">线性表</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/Java实现/">Java实现</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/数据结构/">数据结构</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="理解"><a href="#理解" class="headerlink" title="理解"></a>理解</h3><p>双向链表是链表中的一种，java中的LinkedList实现的就是双向链表。双向链表与单链表相比，多了一个前驱指针，使得链表的操纵更为方便。</p>
+<p>到双向链表这，用包菜来比喻链表已经是不合适了。在我的理解中双向链表是的节点是一个小球，这个小球有前后两个环，一个环是前驱指针 Node pre;一个环是后向指针 Node next,如果有新的元素加入链表，那么这个小球的next环就会勾住新进来的球，而新进来的pre环则会勾住原来的球。</p>
+<h3 id="实现思路："><a href="#实现思路：" class="headerlink" title="实现思路："></a>实现思路：</h3><p> 1、首先写个节点Node，与单链表的相似，多定义一个前驱指针；双链表的类中需要定义一个头结点head和尾节点end，还要有计算链表大小的size</p>
+<p>2、接下来是链表元素的增加，a、如果头结点为空，则新元素直接赋给头结点。b、如果尾节点为空则新元素赋给尾节点，并且尾节点的pre指向头结点，头结点的next指向尾节点；c、建一个临时节点存储尾节点，将新节点接在尾节点后，并且让新节点成为尾节点。要记得size++。</p>
+<p>3、可以插入，找到对应的节点，在其后的插入，并类似以上的的c步骤</p>
+<p>4、删除：先判断索引是否在范围内，如果在索引内，判断距离头结点还是尾节点近，距离近的一端开始搜索，找到后将它的pre节点与next节点连接起来</p>
+<p>5、查找：与删除的前一部分类似，先判断距离哪端近，再近端开始搜索，找到并返回</p>
+<p>步骤结束。</p>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><h4 id="Collection接口"><a href="#Collection接口" class="headerlink" title="Collection接口"></a>Collection接口</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">package linklist;</div><div class="line"></div><div class="line">/**</div><div class="line"> * 定义动态集合上的基本操作</div><div class="line"> * @author zhengwei lastmodified 2017年3月16日</div><div class="line"> *</div><div class="line"> */</div><div class="line">public interface ICollection &#123;</div><div class="line">	/**</div><div class="line">	 * 根据关键字搜索出对应对象</div><div class="line">	 * </div><div class="line">	 * @param key</div><div class="line">	 * @<span class="built_in">return</span></div><div class="line">	 */</div><div class="line">	Object search(Object key);</div><div class="line"></div><div class="line">	/**</div><div class="line">	 * 元素个数</div><div class="line">	 * </div><div class="line">	 * @<span class="built_in">return</span></div><div class="line">	 */</div><div class="line">	int size();</div><div class="line"></div><div class="line">	/**</div><div class="line">	 * 集合是否为空</div><div class="line">	 * </div><div class="line">	 * @<span class="built_in">return</span></div><div class="line">	 */</div><div class="line">	boolean isEmpty();</div><div class="line"></div><div class="line">	/**</div><div class="line">	 * 集合是否包含某个关键字元素</div><div class="line">	 * </div><div class="line">	 * @param o</div><div class="line">	 * @<span class="built_in">return</span></div><div class="line">	 */</div><div class="line">	boolean contains(Object key);</div><div class="line"></div><div class="line">	/**</div><div class="line">	 * 在集合中新增一个元素</div><div class="line">	 * </div><div class="line">	 * @param e</div><div class="line">	 * @<span class="built_in">return</span></div><div class="line">	 */</div><div class="line">	void add(Object e);</div><div class="line"></div><div class="line">	/**</div><div class="line">	 * 按关键字移除元素</div><div class="line">	 * </div><div class="line">	 * @param o</div><div class="line">	 * @<span class="built_in">return</span></div><div class="line">	 */</div><div class="line">	void remove(Object key);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="list接口实现"><a href="#list接口实现" class="headerlink" title="list接口实现"></a>list接口实现</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">package linklist;</div><div class="line"></div><div class="line">/**</div><div class="line"> * 顺序表</div><div class="line"> * @author zhengwei</div><div class="line"> *</div><div class="line"> */</div><div class="line">public interface IList extends ICollection &#123;</div><div class="line">	/**</div><div class="line">	 * 求指定元素的下标，没有这个元素就返回-1</div><div class="line">	 * @param e</div><div class="line">	 * @<span class="built_in">return</span></div><div class="line">	 */</div><div class="line">	int indexOf(Object e);</div><div class="line">	/**</div><div class="line">	 * 获取指定下标处的元素</div><div class="line">	 * @param index</div><div class="line">	 * @<span class="built_in">return</span></div><div class="line">	 */</div><div class="line">	Object get(int index);</div><div class="line">	/**</div><div class="line">	 * 在指定下标处插入元素</div><div class="line">	 * @param e</div><div class="line">	 * @param index</div><div class="line">	 */</div><div class="line">	void add(Object e,int index);</div><div class="line">	/**</div><div class="line">	 * 删除指定下标处的元素</div><div class="line">	 * @param index</div><div class="line">	 * @<span class="built_in">return</span> </div><div class="line">	 */</div><div class="line">	Object delete(int index);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="双向链表实现"><a href="#双向链表实现" class="headerlink" title="双向链表实现"></a>双向链表实现</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div></pre></td><td class="code"><pre><div class="line">package list.linklist;</div><div class="line">/**</div><div class="line"> * </div><div class="line"> * @author chenkaixin</div><div class="line"> *</div><div class="line"> * @param &lt;T&gt;</div><div class="line"> */</div><div class="line">public class DoublyLink&lt;T&gt; implements IList&lt;T&gt; &#123;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 头结点</div><div class="line">     */</div><div class="line">    private Node&lt;T&gt; head;</div><div class="line">    /**</div><div class="line">     * 尾节点</div><div class="line">     */</div><div class="line">    private Node&lt;T&gt; end;</div><div class="line">    /**</div><div class="line">     * 链表的大小</div><div class="line">     */</div><div class="line">    private int size = 0;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public T search(T key) &#123;</div><div class="line">        Node&lt;T&gt; tmp = head;</div><div class="line">        <span class="keyword">if</span> ((tmp.data == null || key == null)) &#123;</div><div class="line">            <span class="built_in">return</span> null;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">while</span> (tmp != null) &#123;</div><div class="line">            <span class="keyword">if</span> (tmp.data.equals(key)) &#123;</div><div class="line">                <span class="built_in">return</span> tmp.data;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                tmp = tmp.next;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="built_in">return</span> null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int <span class="function"><span class="title">size</span></span>() &#123;</div><div class="line">        <span class="built_in">return</span> this.size;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public boolean <span class="function"><span class="title">isEmpty</span></span>() &#123;</div><div class="line">        boolean b = <span class="literal">true</span>;</div><div class="line">        <span class="keyword">if</span> (this.size == 0) &#123;</div><div class="line">            b = <span class="literal">false</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="built_in">return</span> b;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public boolean contains(Object key) &#123;</div><div class="line">        boolean b = <span class="literal">false</span>;</div><div class="line">        Node&lt;T&gt; tem = head;</div><div class="line">        <span class="keyword">while</span> (tem != null) &#123;</div><div class="line">            <span class="keyword">if</span> (tem.data == key) &#123;</div><div class="line">                b = <span class="literal">true</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="built_in">return</span> b;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void add(T e) &#123;</div><div class="line">        <span class="keyword">if</span> (head == null) &#123;</div><div class="line">            head = new Node&lt;T&gt;(e);</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (end == null) &#123;</div><div class="line">            end = new Node&lt;T&gt;(e);</div><div class="line">            end.pre = head;</div><div class="line">            head.next = end;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            Node&lt;T&gt; tem = new Node&lt;T&gt;(e);</div><div class="line">            tem.pre = end;</div><div class="line">            end.next = tem;</div><div class="line">            end = tem;</div><div class="line">        &#125;</div><div class="line">        this.size++;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void remove(T key) &#123;</div><div class="line">        Node&lt;T&gt; tem = head;</div><div class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</div><div class="line">            <span class="keyword">if</span> (tem.data.equals(key)) &#123;</div><div class="line">                delExcege(tem);</div><div class="line">                this.size--;</div><div class="line">                System.out.println(tem.data);</div><div class="line">                <span class="built_in">break</span>;</div><div class="line">            &#125;</div><div class="line">            tem = tem.next;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int indexOf(T e) &#123;</div><div class="line">        Node&lt;T&gt; tem = head;</div><div class="line">        int index = 0;</div><div class="line">        <span class="keyword">while</span> (tem != null) &#123;</div><div class="line">            <span class="keyword">if</span> (tem.data.equals(e)) &#123;</div><div class="line">                <span class="built_in">return</span> index;</div><div class="line">            &#125;</div><div class="line">            tem = tem.next;</div><div class="line">            index++;</div><div class="line">        &#125;</div><div class="line">        <span class="built_in">return</span> -1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public T get(int index) &#123;</div><div class="line">        int i = 0;</div><div class="line">        Node&lt;T&gt; tem = head;</div><div class="line">        <span class="keyword">if</span> (index &gt; 0 &amp;&amp; index &lt; this.size) &#123;</div><div class="line">            <span class="keyword">while</span> (tem != null) &#123;</div><div class="line">                <span class="keyword">if</span> (i == index) &#123;</div><div class="line">                    <span class="built_in">return</span> tem.data;</div><div class="line">                &#125;</div><div class="line">                tem = tem.next;</div><div class="line">                i++;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="built_in">return</span> null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void add(T e, int index) &#123;</div><div class="line">        Node&lt;T&gt; newNode = new Node&lt;T&gt;(e);</div><div class="line">        int i;</div><div class="line">        <span class="keyword">if</span> (0 &lt; index &amp;&amp; index &lt; this.size) &#123;</div><div class="line">            <span class="keyword">if</span> (index &lt; size / 2) &#123;</div><div class="line">                Node&lt;T&gt; tem = head;</div><div class="line">                i = 0;</div><div class="line">                <span class="keyword">while</span> (tem != null) &#123;</div><div class="line">                    <span class="keyword">if</span> (i == index) &#123;</div><div class="line">                        addExcege(newNode, tem);</div><div class="line">                    &#125;</div><div class="line">                    tem = tem.next;</div><div class="line">                    i++;</div><div class="line">                &#125;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                Node&lt;T&gt; tem = end;</div><div class="line">                i = this.size-1;</div><div class="line">                <span class="keyword">while</span> (tem != null) &#123;</div><div class="line">                    <span class="keyword">if</span> (i == index) &#123;</div><div class="line">                        addExcege(newNode, tem);</div><div class="line">                    &#125;</div><div class="line">                    tem = tem.pre;</div><div class="line">                    i--;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Object delete(int index) &#123;</div><div class="line">        Node&lt;T&gt; tem = head;</div><div class="line">        Object result = null;</div><div class="line">        int i;</div><div class="line">        <span class="keyword">if</span> (0 &lt; index &amp;&amp; index &lt; this.size) &#123;</div><div class="line">            <span class="keyword">if</span> (index &lt; size / 2) &#123;</div><div class="line">                i = 0;</div><div class="line">                <span class="keyword">while</span> (tem != null) &#123;</div><div class="line">                    <span class="keyword">if</span> (i == index) &#123;</div><div class="line">                        delExcege(tem);</div><div class="line">                        result = tem.data;</div><div class="line">                    &#125;</div><div class="line">                    tem = tem.next;</div><div class="line">                    i++;</div><div class="line">                &#125;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                <span class="keyword">while</span> (tem != null) &#123;</div><div class="line">                    i = this.size - 1;</div><div class="line">                    <span class="keyword">if</span> (i == index) &#123;</div><div class="line">                        delExcege(tem);</div><div class="line">                        result = tem.data;</div><div class="line"></div><div class="line">                    &#125;</div><div class="line">                    tem = tem.pre;</div><div class="line">                    i--;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="built_in">return</span> result;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void addExcege(Node&lt;T&gt; newNode, Node&lt;T&gt; tem) &#123;</div><div class="line">        newNode.next = tem.next;</div><div class="line">        tem.next.pre = newNode;</div><div class="line">        tem.next = newNode;</div><div class="line">        newNode.pre = tem;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void delExcege(Node&lt;T&gt; tem) &#123;</div><div class="line">        tem.pre.next = tem.next;</div><div class="line">        tem.next.pre = tem.pre;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private class Node&lt;T&gt; &#123;</div><div class="line">        Node&lt;T&gt; next;</div><div class="line">        Node&lt;T&gt; pre;</div><div class="line">        T data;</div><div class="line"></div><div class="line">        public Node(T data) &#123;</div><div class="line">            this.data = data;</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public boolean equals(Object obj) &#123;</div><div class="line">            <span class="keyword">if</span> (this == obj)</div><div class="line">                <span class="built_in">return</span> <span class="literal">true</span>;</div><div class="line">            <span class="keyword">if</span> (obj == null)</div><div class="line">                <span class="built_in">return</span> <span class="literal">false</span>;</div><div class="line">            <span class="keyword">if</span> (this.getClass() != obj.getClass())</div><div class="line">                <span class="built_in">return</span> <span class="literal">false</span>;</div><div class="line">            Node&lt;T&gt; other = (Node) obj;</div><div class="line">            <span class="keyword">if</span> (!getOuterType().equals(other.getOuterType()))</div><div class="line">                <span class="built_in">return</span> <span class="literal">false</span>;</div><div class="line">            <span class="keyword">if</span> (data == null) &#123;</div><div class="line">                <span class="keyword">if</span> (other.data != null)</div><div class="line">                    <span class="built_in">return</span> <span class="literal">false</span>;</div><div class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!data.equals(other.data))</div><div class="line">                <span class="built_in">return</span> <span class="literal">false</span>;</div><div class="line">            <span class="built_in">return</span> <span class="literal">true</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        private DoublyLink <span class="function"><span class="title">getOuterType</span></span>() &#123;</div><div class="line">            <span class="built_in">return</span> DoublyLink.this;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public String <span class="function"><span class="title">toString</span></span>() &#123;</div><div class="line">            <span class="built_in">return</span> this.data.toString();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String <span class="function"><span class="title">toString</span></span>() &#123;</div><div class="line">        Node&lt;T&gt; e = head;</div><div class="line">        StringBuilder sb = new StringBuilder(<span class="string">"["</span>);</div><div class="line">        <span class="keyword">while</span> (e != null) &#123;</div><div class="line">            sb.append(e.data.toString()).append(<span class="string">","</span>);</div><div class="line">            e = e.next;</div><div class="line">        &#125;</div><div class="line">        sb.deleteCharAt(sb.lastIndexOf(<span class="string">","</span>)).append(<span class="string">"]"</span>);</div><div class="line">        <span class="built_in">return</span> sb.toString();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        DoublyLink&lt;Character&gt; dl = new DoublyLink&lt;Character&gt;();</div><div class="line">        dl.add(<span class="string">'3'</span>);</div><div class="line">        dl.add(<span class="string">'9'</span>);</div><div class="line">        dl.add(<span class="string">'4'</span>);</div><div class="line">        dl.add(<span class="string">'6'</span>);</div><div class="line">        dl.add(<span class="string">'8'</span>);</div><div class="line">        dl.add(<span class="string">'b'</span>);</div><div class="line">        dl.add(<span class="string">'p'</span>);</div><div class="line">        System.out.println(dl.indexOf(<span class="string">'9'</span>));</div><div class="line">        System.out.println(dl.size());</div><div class="line">        System.out.println(dl.toString());</div><div class="line">        System.out.println(<span class="string">"======================================="</span>);</div><div class="line">        dl.remove(<span class="string">'9'</span>);</div><div class="line">        System.out.println(dl.get(3));</div><div class="line">        System.out.println(dl.size());</div><div class="line">        System.out.println(dl.toString());</div><div class="line">        System.out.println(<span class="string">"================================="</span>);</div><div class="line">        dl.add(<span class="string">'a'</span>, 2);</div><div class="line">        System.out.println(dl.toString());</div><div class="line">        System.out.println(<span class="string">"================================="</span>);</div><div class="line">        dl.delete(4);</div><div class="line">        System.out.println(dl.search(<span class="string">'a'</span>));</div><div class="line">        System.out.println(dl.toString());</div><div class="line">        System.out.println(<span class="string">"=================================="</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#理解"><span class="toc-text">理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现思路："><span class="toc-text">实现思路：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码实现"><span class="toc-text">代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Collection接口"><span class="toc-text">Collection接口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#list接口实现"><span class="toc-text">list接口实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#双向链表实现"><span class="toc-text">双向链表实现</span></a></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/12/11/多线程/" class="prev">&larr; 上一篇 多线程</a>
+  
+
+  
+
+  
+    <a href="/2017/12/11/单链表/" class="next">下一篇 单链表 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by 陈锴鑫 using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/images/casper.png">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/chenkaixin01">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/qq_34332035/">
+        
+          CSDN
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

@@ -1,0 +1,374 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="陈锴鑫">
+  
+  
+  
+  
+    <meta name="description" content="服务端开发webService注解@webService这个注解表明这个Java类是webService的实现类或者这个Java接口为webService的接口，这个注解有以下6个参数可以配置这个webService的定义1、endpointInterface：定义服务抽象Web Service协定的服务端点接口的完整名称，如果注解通过endpointInterface属性引用某个SEI，那...">
+  
+  <title>cxf-webService [ 陈锴鑫 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/12/11/HashMap并发时的问题/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        HashMap并发出现的问题
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/12/11/CountSort/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        计数排序
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="/images/casper.png"/>
+          <div id="homelink">陈锴鑫</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/chenkaixin01">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>cxf-webService</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-12-11</span>
+      
+        <span id = "post-title-updated">修改于 2017-11-06</span>
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/categories/接口/">接口</a>
+      
+        
+          /
+        
+        
+        <a href="/categories/接口/webService/">webService</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/接口/">接口</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/webService/">webService</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/cxf/">cxf</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="服务端开发"><a href="#服务端开发" class="headerlink" title="服务端开发"></a>服务端开发</h3><h4 id="webService注解"><a href="#webService注解" class="headerlink" title="webService注解"></a>webService注解</h4><h5 id="webService"><a href="#webService" class="headerlink" title="@webService"></a>@webService</h5><p>这个注解表明这个Java类是webService的实现类或者这个Java接口为webService的接口，这个注解有以下6个参数可以配置这个webService的定义<br>1、endpointInterface：定义服务抽象Web Service协定的服务端点接口的完整名称，如果注解通过endpointInterface属性引用某个SEI，那么还必须使用@webService注解来注解该SEI<br>2、name：默认的port名为”实现类名+Port”,binding名为”实现类名+PortBinding”，通过指定name的值来替换实现类的值<br>3、portName：可以完成替换默认Port名和binding名(portName+Binding)<br>4、targetNamespace：指定targerNamespace值，默认值为<a href="&quot;&quot;">http://包名/</a>，通过这可以自定义一个targetNamespace值<br>5：serviceName：当映射到WSDL1.1时，此名称被用作wsdl:service的名称和wsdl:definitions的名称<br>6、wsdlLocation指向一个预定义的wsdl文件，代替自动生成的wsdl文件</p>
+<h5 id="WebMethod"><a href="#WebMethod" class="headerlink" title="@WebMethod"></a>@WebMethod</h5><p>表示作为一项web Service操作的方法应用客户机或服务器服务端点接口（SEI）上的方法，或者应用于 JavaBeans 端点的服务器端点实现类。<br>需要在使用了@WebService注解的类中使用<br>1、operationName：指定与此方法相匹配的wsdl:operation 的名称。缺省值为 Java 方法的名称。（字符串）<br>2、action：定义此操作的行为。对于 SOAP 绑定，此值将确定 SOAPAction 头的值。缺省值为 Java 方法的名称。（字符串）<br>3、exclude：指定是否从 Web Service 中排除某一方法。缺省值为 false。（布尔值） </p>
+<h5 id="WebParam"><a href="#WebParam" class="headerlink" title="@WebParam"></a>@WebParam</h5><p>用于定制从单个参数至 Web Service 消息部件和 XML 元素的映射<br>1、name ：参数的名称。如果操作是远程过程调用（RPC）类型并且未指定partName 属性，那么这是用于表示参数的 wsdl:part 属性的名称。<br>如果操作是文档类型或者参数映射至某个头，那么 -name 是用于表示该参数的 XML 元素的局部名称。如果操作是文档类型、<br>参数类型为 BARE 并且方式为 OUT 或 INOUT，那么必须指定此属性。（字符串）<br>2、partName：定义用于表示此参数的 wsdl:part属性的名称。仅当操作类型为 RPC 或者操作是文档类型并且参数类型为BARE 时才使用此参数。（字符串）<br>3、targetNamespace：指定参数的 XML 元素的 XML 名称空间。当属性映射至 XML 元素时，仅应用于文档绑定。缺省值为 Web Service 的 targetNamespace。（字符串）<br>4、mode：此值表示此方法的参数流的方向。有效值为 IN、INOUT 和 OUT。（字符串）<br>5、header：指定参数是在消息头还是消息体中。缺省值为 false。（布尔值）</p>
+<h5 id="WebResult"><a href="#WebResult" class="headerlink" title="@WebResult"></a>@WebResult</h5><p>注释用于定制从返回值至 WSDL 部件或 XML 元素的映射。将此注释应用于客户机或服务器服务端点接口（SEI）上的方法，或者应用于 JavaBeans 端点的服务器端点实现类。<br>1、name：当返回值列示在 WSDL 文件中并且在连接上的消息中找到该返回值时，指定该返回值的名称。对于 RPC 绑定，这是用于表示返回值的 wsdl:part属性的名称。对于文档绑定，-name参数是用于表示返回值的 XML 元素的局部名。对于 RPC 和 DOCUMENT/WRAPPED 绑定，缺省值为 return。对于 DOCUMENT/BARE 绑定，缺省值为方法名 + Response。（字符串）<br>2、targetNamespace：指定返回值的 XML 名称空间。仅当操作类型为 RPC 或者操作是文档类型并且参数类型为 BARE 时才使用此参数。（字符串）<br>3、header：指定头中是否附带结果。缺省值为false。（布尔值）<br>4、partName：指定 RPC 或 DOCUMENT/BARE 操作的结果的部件名称。缺省值为@WebResult.name。（字符串）</p>
+<h4 id="配置maven-pom文件配置"><a href="#配置maven-pom文件配置" class="headerlink" title="配置maven pom文件配置"></a>配置maven pom文件配置</h4><p>添加以下依赖<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;cxf-api&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;2.5.0&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;cxf-rt-frontend-jaxws&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;2.5.0&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;cxf-rt-bindings-soap&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;2.5.0&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;cxf-rt-transports-http&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;2.5.0&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;cxf-rt-ws-security&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;2.5.0&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure></p>
+<p>添加以下build<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;build&gt;</div><div class="line">    &lt;finalName&gt;cfxWSServer&lt;/finalName&gt;</div><div class="line">&lt;/build&gt;</div></pre></td></tr></table></figure></p>
+<h4 id="webService接口"><a href="#webService接口" class="headerlink" title="webService接口"></a>webService接口</h4><p>在接口上加@WebService注解，并导入相应的包<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">package com.demo.hello.server;</div><div class="line"></div><div class="line">import java.util.List;</div><div class="line"></div><div class="line">import javax.jws.WebParam;</div><div class="line">import javax.jws.WebService;</div><div class="line">import javax.jws.soap.SOAPBinding;</div><div class="line">import javax.jws.soap.SOAPBinding.Style;</div><div class="line"></div><div class="line">import com.demo.hello.entry.People;</div><div class="line">import com.demo.hello.entry.User;</div><div class="line">import com.demo.hello.entry.Users;</div><div class="line"></div><div class="line">@WebService</div><div class="line">public interface Greeting &#123;</div><div class="line">	/**</div><div class="line">	 * @WevParam注解不加也可以</div><div class="line">	 * @param userName</div><div class="line">	 * @<span class="built_in">return</span></div><div class="line">	 */</div><div class="line">    String sayHi(@WebParam(name=<span class="string">"username"</span>)String userName);</div><div class="line">    String sayHi2(@WebParam(name=<span class="string">"username"</span>)String userName);</div><div class="line">    String[] sayHello(String[] userName);</div><div class="line">    public String sayToPeople(People people);</div><div class="line">    public String greeting(User user);</div><div class="line">    /**</div><div class="line">     * 传输List对象</div><div class="line">     * @param userl</div><div class="line">     * @<span class="built_in">return</span></div><div class="line">     */</div><div class="line">    public List sayToList(List&lt;User&gt; userl);</div><div class="line">    /**</div><div class="line">     * 传输复杂对象需要用类包装</div><div class="line">     * @param users</div><div class="line">     * @<span class="built_in">return</span></div><div class="line">     */</div><div class="line">    public Users sayToList2(Users users);</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<h4 id="webService实现类"><a href="#webService实现类" class="headerlink" title="webService实现类"></a>webService实现类</h4><p>实现类同样需要添加@WebService注解<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line">package com.demo.hello.server;</div><div class="line"></div><div class="line">import java.util.List;</div><div class="line"></div><div class="line">import javax.jws.WebService;</div><div class="line"></div><div class="line">import com.demo.hello.entry.People;</div><div class="line">import com.demo.hello.entry.User;</div><div class="line">import com.demo.hello.entry.Users;</div><div class="line"></div><div class="line">@WebService</div><div class="line">public class GeetingImpl implements Greeting &#123;</div><div class="line"></div><div class="line">	public String sayHi(String userName) &#123;</div><div class="line">		</div><div class="line">		<span class="built_in">return</span> <span class="string">"Hello"</span>+userName;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public String sayHi2(String userName) &#123;</div><div class="line">		</div><div class="line">		<span class="built_in">return</span> <span class="string">"Hello"</span>+userName;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public String[] sayHello(String[] userName) &#123;</div><div class="line">		</div><div class="line">		<span class="built_in">return</span> userName;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public String greeting(User user) &#123;</div><div class="line">		</div><div class="line">		<span class="built_in">return</span> <span class="string">"123"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public List sayToList(List&lt;User&gt; userl) &#123;</div><div class="line">		String[] users = new String[userl.size()];</div><div class="line">		int i = 0;</div><div class="line">		<span class="keyword">for</span> (User user : userl) &#123;</div><div class="line">		     users[i] = user.getName();</div><div class="line">		     i++;</div><div class="line">		&#125;</div><div class="line">		<span class="built_in">return</span> userl;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public Users sayToList2(Users users) &#123;</div><div class="line">		</div><div class="line">		<span class="built_in">return</span> users;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	@Override</div><div class="line">	public String sayToPeople(People people) &#123;</div><div class="line">		<span class="built_in">return</span> <span class="string">"people"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="实体对象"><a href="#实体对象" class="headerlink" title="实体对象"></a>实体对象</h4><p>传输User以及People的对象<br>User<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">package com.demo.hello.entry;</div><div class="line"></div><div class="line">import java.io.Serializable;</div><div class="line"></div><div class="line"></div><div class="line">public class User implements Serializable &#123;</div><div class="line">	</div><div class="line">	private static final long serialVersionUID = 1L;</div><div class="line">	</div><div class="line">	private String name;</div><div class="line">	private String sex;</div><div class="line">	</div><div class="line">	//get与<span class="built_in">set</span>方法</div><div class="line">	</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>People:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">package com.demo.hello.entry;</div><div class="line"></div><div class="line">public class People &#123;</div><div class="line">	private String name;</div><div class="line">	private String age;</div><div class="line">	//get与<span class="built_in">set</span>方法</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>Users类用来包装复杂对象<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">package com.demo.hello.entry;</div><div class="line"></div><div class="line">import java.util.ArrayList;</div><div class="line"></div><div class="line">public class Users &#123;</div><div class="line">	/**</div><div class="line">	 * 直接使用具体的**List或者具体的**Map</div><div class="line">	 */</div><div class="line">	private ArrayList&lt;ArrayList&lt;User&gt;&gt; userlist;</div><div class="line"></div><div class="line">	/**</div><div class="line">	 * 无参构造函数不能丢</div><div class="line">	 */</div><div class="line">	public <span class="function"><span class="title">Users</span></span>()&#123;&#125;;</div><div class="line"></div><div class="line">	public Users(ArrayList&lt;ArrayList&lt;User&gt;&gt; userlist) &#123;</div><div class="line">		super();</div><div class="line">		this.userlist = userlist;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	//get and <span class="built_in">set</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="web-xml配置"><a href="#web-xml配置" class="headerlink" title="web.xml配置"></a>web.xml配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;  </div><div class="line">&lt;web-app version=<span class="string">"2.5"</span>  </div><div class="line">    xmlns=<span class="string">"http://java.sun.com/xml/ns/javaee"</span>  </div><div class="line">    xmlns:xsi=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span>  </div><div class="line">    xsi:schemaLocation=<span class="string">"http://java.sun.com/xml/ns/javaee  </span></div><div class="line"><span class="string">    http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"</span>&gt;  </div><div class="line">    &lt;!-- 配置 Spring 配置文件的名称和位置 --&gt;</div><div class="line">    &lt;context-param&gt;  </div><div class="line">        &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;  </div><div class="line">        &lt;param-value&gt;/WEB-INF/config/spring.xml&lt;/param-value&gt;  </div><div class="line">    &lt;/context-param&gt;  </div><div class="line">    &lt;!-- 启动 IOC 容器的 ServletContextListener --&gt;</div><div class="line">    &lt;listener&gt;</div><div class="line">        &lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;</div><div class="line">    &lt;/listener&gt; </div><div class="line">    </div><div class="line">    &lt;!-- 配置字符集 --&gt;  </div><div class="line">    &lt;filter&gt;  </div><div class="line">        &lt;filter-name&gt;encodingFilter&lt;/filter-name&gt;  </div><div class="line">        &lt;filter-class&gt;org.springframework.web.filter.CharacterEncodingFilter&lt;/filter-class&gt;  </div><div class="line">        &lt;init-param&gt;  </div><div class="line">            &lt;param-name&gt;encoding&lt;/param-name&gt;  </div><div class="line">            &lt;param-value&gt;UTF-8&lt;/param-value&gt;  </div><div class="line">        &lt;/init-param&gt;  </div><div class="line">        &lt;init-param&gt;  </div><div class="line">            &lt;param-name&gt;forceEncoding&lt;/param-name&gt;  </div><div class="line">            &lt;param-value&gt;<span class="literal">true</span>&lt;/param-value&gt;  </div><div class="line">        &lt;/init-param&gt;  </div><div class="line">    &lt;/filter&gt;  </div><div class="line">    &lt;filter-mapping&gt;  </div><div class="line">        &lt;filter-name&gt;encodingFilter&lt;/filter-name&gt;  </div><div class="line">        &lt;url-pattern&gt;/*&lt;/url-pattern&gt;  </div><div class="line">    &lt;/filter-mapping&gt;</div><div class="line">    &lt;servlet&gt;</div><div class="line">        &lt;servlet-name&gt;CXFServlet&lt;/servlet-name&gt;</div><div class="line">        &lt;servlet-class&gt;org.apache.cxf.transport.servlet.CXFServlet&lt;/servlet-class&gt;</div><div class="line">        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;</div><div class="line">    &lt;/servlet&gt;</div><div class="line">    &lt;servlet-mapping&gt;</div><div class="line">        &lt;servlet-name&gt;CXFServlet&lt;/servlet-name&gt;</div><div class="line">        &lt;!--==这个设置很重要，那么我们的webservice的地址就是http://localhost:8080/yourProgramName/webservice/Greeting=== --&gt;</div><div class="line">        &lt;url-pattern&gt;/webservice/*&lt;/url-pattern&gt;</div><div class="line">    &lt;/servlet-mapping&gt;</div><div class="line">    </div><div class="line">    </div><div class="line">    &lt;display-name&gt;hello world!&lt;/display-name&gt;</div><div class="line">    &lt;welcome-file-list&gt;</div><div class="line">        &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;</div><div class="line">        &lt;welcome-file&gt;index.htm&lt;/welcome-file&gt;</div><div class="line">        &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;</div><div class="line">        &lt;welcome-file&gt;default.html&lt;/welcome-file&gt;</div><div class="line">        &lt;welcome-file&gt;default.htm&lt;/welcome-file&gt;</div><div class="line">        &lt;welcome-file&gt;default.jsp&lt;/welcome-file&gt;</div><div class="line">    &lt;/welcome-file-list&gt;</div><div class="line">&lt;/web-app&gt;</div></pre></td></tr></table></figure>
+<h4 id="Spring配置"><a href="#Spring配置" class="headerlink" title="Spring配置"></a>Spring配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;</div><div class="line">&lt;beans xmlns=<span class="string">"http://www.springframework.org/schema/beans"</span></div><div class="line">xmlns:context=<span class="string">"http://www.springframework.org/schema/context"</span></div><div class="line">xmlns:jaxws=<span class="string">"http://cxf.apache.org/jaxws"</span> xmlns:xsi=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></div><div class="line">xsi:schemaLocation=<span class="string">"http://www.springframework.org/schema/beans</span></div><div class="line"><span class="string">http://www.springframework.org/schema/beans/spring-beans-3.0.xsd</span></div><div class="line"><span class="string">http://www.springframework.org/schema/context</span></div><div class="line"><span class="string">http://www.springframework.org/schema/context/spring-context-3.0.xsd</span></div><div class="line"><span class="string">http://cxf.apache.org/jaxws</span></div><div class="line"><span class="string">http://cxf.apache.org/schemas/jaxws.xsd"</span>&gt;</div><div class="line">&lt;!--=============== 实现类的bean，需要spring注入 ============================--&gt;</div><div class="line">&lt;!-- 需要到达实现类 --&gt;</div><div class="line">&lt;bean id=<span class="string">"greetingImpl"</span> class=<span class="string">"com.demo.hello.server.GeetingImpl"</span>/&gt;</div><div class="line"> &lt;jaxws:endpoint id=<span class="string">"greeting"</span>  implementor=<span class="string">"#greetingImpl"</span>   address=<span class="string">"/Greeting"</span> /&gt;</div><div class="line"> </div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure>
+<h4 id="启动服务，验证"><a href="#启动服务，验证" class="headerlink" title="启动服务，验证"></a>启动服务，验证</h4><p>访问<a href="http://localhost:8080/项目名/webservice/Greeting?wsdl" target="_blank" rel="external">http://localhost:8080/项目名/webservice/Greeting?wsdl</a><br>出现wsdl.xml文件则成功。</p>
+<h3 id="使用cxf自动生成客户端"><a href="#使用cxf自动生成客户端" class="headerlink" title="使用cxf自动生成客户端"></a>使用cxf自动生成客户端</h3><h4 id="环境变量配置"><a href="#环境变量配置" class="headerlink" title="环境变量配置"></a>环境变量配置</h4><p>右键此电脑——&gt;高级系统设置——&gt;环境变量<br>在系统变量<br>在path中添加…/cxf/bin的路径<br>出现下图就成了：<br><a href="/images/wsdl2java.jpg">wsdl2java</a></p>
+<h4 id="生成客户端代码命令"><a href="#生成客户端代码命令" class="headerlink" title="生成客户端代码命令"></a>生成客户端代码命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wsdl2java -d 客户端代码存放地址 -client wsdl的地址,例如(http://localhost:8080/项目名/webservice/Greeting?wsdl)</div></pre></td></tr></table></figure>
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#服务端开发"><span class="toc-text">服务端开发</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#webService注解"><span class="toc-text">webService注解</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#webService"><span class="toc-text">@webService</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#WebMethod"><span class="toc-text">@WebMethod</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#WebParam"><span class="toc-text">@WebParam</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#WebResult"><span class="toc-text">@WebResult</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#配置maven-pom文件配置"><span class="toc-text">配置maven pom文件配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#webService接口"><span class="toc-text">webService接口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#webService实现类"><span class="toc-text">webService实现类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实体对象"><span class="toc-text">实体对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#web-xml配置"><span class="toc-text">web.xml配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Spring配置"><span class="toc-text">Spring配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#启动服务，验证"><span class="toc-text">启动服务，验证</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用cxf自动生成客户端"><span class="toc-text">使用cxf自动生成客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#环境变量配置"><span class="toc-text">环境变量配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#生成客户端代码命令"><span class="toc-text">生成客户端代码命令</span></a></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/12/11/HashMap并发时的问题/" class="prev">&larr; 上一篇 HashMap并发出现的问题</a>
+  
+
+  
+
+  
+    <a href="/2017/12/11/CountSort/" class="next">下一篇 计数排序 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by 陈锴鑫 using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/images/casper.png">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/chenkaixin01">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/qq_34332035/">
+        
+          CSDN
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

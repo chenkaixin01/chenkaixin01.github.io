@@ -1,0 +1,403 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="陈锴鑫">
+  
+  
+  
+  
+    <meta name="description" content="数据库引擎数据库引擎是用于存储、处理和保护数据的核心服务。利用数据库引擎可控制访问权限和快速处理事务，从而满足企业内大多数需要处理大量数据的应用程序的要求。
+InnodbInnodb提供了对数据库ACID事务的支持，并且实现SQL标准的四种隔离级别 ,该引擎还提供了行级锁  和外键约束,它的设计目标是处理大容量数据库系统，它本身基于MySQL后台的完整数据库系统，MySQL运行时Innodb...">
+  
+  <title>MySQL引擎 [ 陈锴鑫 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/12/11/MySQL索引实现/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        数据库索引
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/12/11/MergeSort/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        归并排序
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="/images/casper.png"/>
+          <div id="homelink">陈锴鑫</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/chenkaixin01">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>MySQL引擎</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-12-11</span>
+      
+        <span id = "post-title-updated">修改于 2017-10-25</span>
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/categories/数据库/">数据库</a>
+      
+        
+          /
+        
+        
+        <a href="/categories/数据库/MySQL/">MySQL</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/数据库/">数据库</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/MySQL/">MySQL</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/数据库引擎/">数据库引擎</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="数据库引擎"><a href="#数据库引擎" class="headerlink" title="数据库引擎"></a>数据库引擎</h3><p>数据库引擎是用于存储、处理和保护数据的核心服务。利用数据库引擎可控制访问权限和快速处理事务，从而满足企业内大多数需要处理大量数据的应用程序的要求。</p>
+<h3 id="Innodb"><a href="#Innodb" class="headerlink" title="Innodb"></a>Innodb</h3><p>Innodb提供了对数据库ACID事务的支持，并且实现SQL标准的四种隔离级别 <1>,该引擎还提供了行级锁 <2> 和外键约束,它的设计目标是处理大容量数据库系统，它本身基于MySQL后台的完整数据库系统，MySQL运行时Innodb会在内存中建立缓冲池，用于缓冲数据和索引，但Innodb不支持全文检索(FULLTEXT)<3>而且它没有保存表的行数，当 select count(<code>*</code>) from table 时需要扫描全表。当需要使用数据库事务时，该引擎当然是首选。由于锁的粒度更小，写操作时不会锁定全表，，所以在并发较高时，使用Innodb引擎会提升效率。但行级锁不是万能的，如果一个SQL语句不能确定扫描范围时，Innodb仍然会锁全表。</3></2></1></p>
+<p><1>: 数据库事务的隔离级别有4个，由低到高依次为Read uncommitted(未授权读取、读未提交)、Read committed（授权读取、读提交）、Repeatable read（可重复读取）、Serializable（序列化），这四个级别可以逐个解决脏读、不可重复读、幻读这几类问题。</1></p>
+<p><2>: 行级锁：仅对指定的记录进行加锁，这样其它进程还是可以对同一个表中的其它记录进行操作。</2></p>
+<p><3>: 全文检索：先建立索引，再通过索引进行搜索就是全文检索</3></p>
+<h3 id="MyISAM"><a href="#MyISAM" class="headerlink" title="MyISAM"></a>MyISAM</h3><p>MyISAM是MySQL默认的引擎，但是它没有提供对数据库事务的支持，也不支持行级锁和外键，因此在insert或者update数据时即写操作需要锁定整个表，不过MyISAM中存储了表的行数，于是当select count(<code>*</code>) from table 时只需要直接读取已经保存好的值。</p>
+<h3 id="两种引擎的对比表"><a href="#两种引擎的对比表" class="headerlink" title="两种引擎的对比表"></a>两种引擎的对比表</h3><table>
+<thead>
+<tr>
+<th style="text-align:left"></th>
+<th style="text-align:left">Innodb</th>
+<th style="text-align:left">MyISAM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">对事务的支持</td>
+<td style="text-align:left">支持ACID事务</td>
+<td style="text-align:left">不支持</td>
+</tr>
+<tr>
+<td style="text-align:left">锁</td>
+<td style="text-align:left">支持行级锁</td>
+<td style="text-align:left">整体加锁</td>
+</tr>
+<tr>
+<td style="text-align:left">全文检索</td>
+<td style="text-align:left">不支持</td>
+<td style="text-align:left">支持</td>
+</tr>
+<tr>
+<td style="text-align:left">保存表的行数</td>
+<td style="text-align:left">没有</td>
+<td style="text-align:left">有</td>
+</tr>
+<tr>
+<td style="text-align:left">索引</td>
+<td style="text-align:left">主键下存储该行的数据，此索引指向对主键的引用</td>
+<td style="text-align:left">主索引和次索引都指向物理行</td>
+</tr>
+</tbody>
+</table>
+<h3 id="两种引擎的选择"><a href="#两种引擎的选择" class="headerlink" title="两种引擎的选择"></a>两种引擎的选择</h3><p>大尺寸的数据集趋向于选择Innodb引擎，因为它支持处理和故障修复。数据库大小决定了故障回复的时间长短，Innodb可以利用事务 日志进行数据恢复，这会比较快。主键查询在Innodb引擎下也会相当快，不过如果主键太长也会导致性能问题。大批量的insert（批量插入）语句在MyISAM下会快一些，但update语句在Innodb下则会更快一些，尤其在并发大时。</p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#数据库引擎"><span class="toc-text">数据库引擎</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Innodb"><span class="toc-text">Innodb</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MyISAM"><span class="toc-text">MyISAM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#两种引擎的对比表"><span class="toc-text">两种引擎的对比表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#两种引擎的选择"><span class="toc-text">两种引擎的选择</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/12/11/MySQL索引实现/" class="prev">&larr; 上一篇 数据库索引</a>
+  
+
+  
+
+  
+    <a href="/2017/12/11/MergeSort/" class="next">下一篇 归并排序 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by 陈锴鑫 using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/images/casper.png">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/chenkaixin01">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/qq_34332035/">
+        
+          CSDN
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

@@ -1,0 +1,381 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="陈锴鑫">
+  
+  
+  
+  
+    <meta name="description" content="数据结构及算法基础索引的本质 Mysql官方对索引的定义为：索引(Index)是帮助MySQL高效获取数据的数据结构。句子主干就是索引是数据结构。 数据库查询是数据库的主要功能，我们都希望查询数据的速度尽可能快，因此数据库系统设计会从查询的优化的角度进行优化。最基本的查询算法就是顺序查找，但这种复杂度为O(n)查找在数据量大的时候是糟糕的。当然还有很多好的查找算法，如：二分查找(binary...">
+  
+  <title>MySQL索引数据结构 [ 陈锴鑫 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/12/11/PLSQL远程连接Oracle数据库/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        PLSQL远程连接Oracle数据库
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/12/11/MySQL索引实现/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        数据库索引
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="/images/casper.png"/>
+          <div id="homelink">陈锴鑫</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/chenkaixin01">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>MySQL索引数据结构</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-12-11</span>
+      
+        <span id = "post-title-updated">修改于 2017-10-25</span>
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/categories/数据库/">数据库</a>
+      
+        
+          /
+        
+        
+        <a href="/categories/数据库/MySQL/">MySQL</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/数据库/">数据库</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/MySQL/">MySQL</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/索引/">索引</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/B-Tree/">B-Tree</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/B-Tree/">B+Tree</a>
+      
+      </span>
+      
+    </p>
+    
+    <h2 id="数据结构及算法基础"><a href="#数据结构及算法基础" class="headerlink" title="数据结构及算法基础"></a>数据结构及算法基础</h2><h3 id="索引的本质"><a href="#索引的本质" class="headerlink" title="索引的本质"></a>索引的本质</h3><p> Mysql官方对索引的定义为：索引(Index)是帮助MySQL高效获取数据的数据结构。句子主干就是索引是数据结构。<br> 数据库查询是数据库的主要功能，我们都希望查询数据的速度尽可能快，因此数据库系统设计会从查询的优化的角度进行优化。最基本的查询算法就是顺序查找，但这种复杂度为O(n)查找在数据量大的时候是糟糕的。当然还有很多好的查找算法，如：二分查找(binary search)、二叉树查找(binary tree search)等，但这些算法只能应用于特定的数据结构中，例如二分查找要求数据有序，二叉树查找只能应用于二叉查找树上；而正常的数据是不能够完全满足数据结构，所以将这些数据结构以某种方式引用数据，这样就可以在这些数据结构上实现高级的查找算法。这种数据结构就是索引。<br> <img src="/images/索引1.png" alt="图一"><br> 虽然图一展示的是一个正确的索引，但是在实际应用中，没有一个数据库是依赖二叉查找树或红黑树来作为索引的数据结构。原因在后续介绍。</p>
+<h3 id="B-Tree与-B-Tree"><a href="#B-Tree与-B-Tree" class="headerlink" title="B-Tree与  B+Tree"></a>B-Tree与  B+Tree</h3><h4 id="B-Tree"><a href="#B-Tree" class="headerlink" title="B-Tree"></a>B-Tree</h4><p>B-Tree：多路查找树，一种适合磁盘或其他存储设备的数据结构</p>
+<h5 id="B-Tree特性"><a href="#B-Tree特性" class="headerlink" title="B-Tree特性"></a>B-Tree特性</h5><p>（ceil(x)为去上限的函数）<br>1、数种每个节点最多有m个孩子；<br>2、除了根节点和叶子节点外，其他每个节点至少有ceil(m/2)个孩子<br>3、若根节点不是叶子节点，则至少有2个孩子<br>4、所有叶子节点都出现在同一层，叶子节点不包含任何关键字信息<br>5、每个非终端结点中包含有n个关键字信息： (n，P0，K1，P1，K2，P2，……，Kn，Pn)。其中：<br>a) Ki (i=1…n)为关键字，且关键字按顺序排序K(i-1)&lt; Ki。<br>b) Pi为指向子树根的接点，且指针P(i-1)指向子树种所有结点的关键字均小于Ki，但都大于K(i-1)。<br>c) 关键字的个数n必须满足： ceil(m / 2)-1 &lt;= n &lt;= m-1<br><img src="/images/B-Tree.jpg" alt="图二"></p>
+<h5 id="insert"><a href="#insert" class="headerlink" title="insert"></a>insert</h5><p>插入一个元素时，首先在B-tree中是否存在，如果不存在，即在叶子结点处结束，然后在叶子结点中插入该新的元素，注意：如果叶子结点空间足够，这里需要向右移动该叶子结点中大于新插入关键字的元素，如果空间满了以致没有足够的空间去添加新的元素，则将该结点进行“分裂”，将一半数量的关键字元素分裂到新的其相邻右结点中，中间关键字元素上移到父结点中（当然，如果父结点空间满了，也同样需要“分裂”操作），而且当结点中关键元素向右移动了，相关的指针也需要向右移。如果在根结点插入新元素，空间满了，则进行分裂操作，这样原来的根结点中的中间关键字元素向上移动到新的根结点中，因此导致树的高度增加一层。</p>
+<h5 id="delete"><a href="#delete" class="headerlink" title="delete"></a>delete</h5><p>首先查找B-tree中需删除的元素,如果该元素在B-tree中存在，则将该元素在其结点中进行删除，如果删除该元素后，首先判断该元素是否有左右孩子结点，如果有，则上移孩子结点中的某相近元素到父节点中，然后是移动之后的情况；如果没有，直接删除后，移动之后的情况.。<br>删除元素，移动相应元素之后，如果某结点中元素数目小于ceil(m/2)-1，则需要看其某相邻兄弟结点是否丰满（结点中元素个数大于ceil(m/2)-1），如果丰满，则向父节点借一个元素来满足条件；如果其相邻兄弟都刚脱贫，即借了之后其结点数目小于ceil(m/2)-1，则该结点与其相邻的某一兄弟结点进行“合并”成一个结点，以此来满足条件</p>
+<h4 id="B-Tree-1"><a href="#B-Tree-1" class="headerlink" title="B+Tree"></a>B+Tree</h4><p>B+Tree 是B-Tree的增强版，它将所有的数据都存储在了叶子节点中，非叶子节点值存放关键字和孩子指针，因此最大化了内部节点的分支因子，所以B+Tree的遍历更加高效<br><img src="/images/B+Tree.jpg" alt="图三"></p>
+<h3 id="为什么使用B-Tree-B-Tree"><a href="#为什么使用B-Tree-B-Tree" class="headerlink" title="为什么使用B-Tree/B+Tree"></a>为什么使用B-Tree/B+Tree</h3><h4 id="磁盘存取原理"><a href="#磁盘存取原理" class="headerlink" title="磁盘存取原理"></a>磁盘存取原理</h4><p>索引一般以文件形式存储在磁盘上，索引检索需要I/O操作，而磁盘I/O存在机械运动的耗费，时间消耗是极大的。</p>
+<h5 id="磁盘结构"><a href="#磁盘结构" class="headerlink" title="磁盘结构"></a>磁盘结构</h5><p>盘片被划分成一系列同心环，圆心是盘片中心，每个同心环叫做一个磁道，所有半径相同的磁道组成一个柱面。磁道被沿半径线划分成一个个小的段，每个段叫做一个扇区，每个扇区是磁盘的最小存储单元</p>
+<h5 id="磁盘预读"><a href="#磁盘预读" class="headerlink" title="磁盘预读"></a>磁盘预读</h5><p>为了提高效率，尽量减少磁盘I/O,磁盘每次会进行预读，预读的单位是页(page)，当程序要读取的数据不在主存中时，会触发一个缺页异常，此时系统会向磁盘发出读盘信号，磁盘会找到数据的起始位置并向后连续读取一页或几页载入内存中，然后异常返回，程序继续运行。</p>
+<h4 id="使用B-Tree-B-Tree"><a href="#使用B-Tree-B-Tree" class="headerlink" title="使用B-Tree/B+Tree"></a>使用B-Tree/B+Tree</h4><p>因为磁盘预读大单位为页(page),所以索引中B-Tree/B+Tree度的设置一般为度的大小。<br>B-Tree中一次检索最多需要h-1次I/O，相对于红黑树的高度要少很多，也就更加的节省资源。</p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据结构及算法基础"><span class="toc-text">数据结构及算法基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#索引的本质"><span class="toc-text">索引的本质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B-Tree与-B-Tree"><span class="toc-text">B-Tree与  B+Tree</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#B-Tree"><span class="toc-text">B-Tree</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#B-Tree特性"><span class="toc-text">B-Tree特性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#insert"><span class="toc-text">insert</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#delete"><span class="toc-text">delete</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#B-Tree-1"><span class="toc-text">B+Tree</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么使用B-Tree-B-Tree"><span class="toc-text">为什么使用B-Tree/B+Tree</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#磁盘存取原理"><span class="toc-text">磁盘存取原理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#磁盘结构"><span class="toc-text">磁盘结构</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#磁盘预读"><span class="toc-text">磁盘预读</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用B-Tree-B-Tree"><span class="toc-text">使用B-Tree/B+Tree</span></a></li></ol></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/12/11/PLSQL远程连接Oracle数据库/" class="prev">&larr; 上一篇 PLSQL远程连接Oracle数据库</a>
+  
+
+  
+
+  
+    <a href="/2017/12/11/MySQL索引实现/" class="next">下一篇 数据库索引 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by 陈锴鑫 using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/images/casper.png">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/chenkaixin01">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/qq_34332035/">
+        
+          CSDN
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

@@ -1,0 +1,362 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="陈锴鑫">
+  
+  
+  
+  
+    <meta name="description" content="思想将数据根据某种逻辑分为若干个bucket，在每个bucket中各自排序，然后将各个bucket根据之前的逻辑进行排序，构成有序。是分治法思想的体现。
+实现思路建立一定长度的数组作为桶（可以是以区间||直接以数组长度），每个数组元素都是一个桶，桶中装的是链表；桶中链表的数据应该可以取整或者以其他区间的方式写入，后一种桶长度 则以值*数组长度/max+1;桶中以插入排序进行排序，需要与链表的...">
+  
+  <title>桶排序 [ 陈锴鑫 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/12/11/cas/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        CAS
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/12/11/BubbleSort/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        冒泡排序
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="/images/casper.png"/>
+          <div id="homelink">陈锴鑫</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/chenkaixin01">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>桶排序</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-12-11</span>
+      
+        <span id = "post-title-updated">修改于 2017-10-21</span>
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/categories/数据结构/">数据结构</a>
+      
+        
+          /
+        
+        
+        <a href="/categories/数据结构/排序/">排序</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/Java实现/">Java实现</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/数据结构/">数据结构</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/排序/">排序</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h3><p>将数据根据某种逻辑分为若干个bucket，在每个bucket中各自排序，然后将各个bucket根据之前的逻辑进行排序，构成有序。是分治法思想的体现。</p>
+<h3 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h3><p>建立一定长度的数组作为桶（可以是以区间||直接以数组长度），每个数组元素都是一个桶，桶中装的是链表；桶中链表的数据应该可以取整或者以其他区间的方式写入，后一种桶长度 则以值*数组长度/max+1;桶中以插入排序进行排序，需要与链表的头结点，中间节点，尾节点对比 当桶中数据过多时，插入排序会很影响速率；</p>
+<h3 id="实现代码"><a href="#实现代码" class="headerlink" title="实现代码"></a>实现代码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div></pre></td><td class="code"><pre><div class="line">package sort;</div><div class="line"></div><div class="line">import java.util.Random;</div><div class="line"></div><div class="line">public class BucketSort &#123;</div><div class="line">    /**</div><div class="line">     * 桶排序：建立一定长度的数组作为桶（可以是以区间||直接以数组长度），每个数组元素都是一个桶，桶中装的是链表</div><div class="line">     *      桶中链表的数据应该可以取整或者以其他区间的方式写入，后一种桶长度 则以值*数组长度/max+1;</div><div class="line">     *      桶中以插入排序进行排序，需要与链表的头结点，中间节点，尾节点对比</div><div class="line">     * 当桶中数据过多时，插入排序会很影响速率；</div><div class="line">     * @param arr</div><div class="line">     */</div><div class="line">    public static void bucketSort(int[] arr) &#123;</div><div class="line">        int max = 0;</div><div class="line">        <span class="keyword">for</span> ( int i = 0; i &lt; arr.length; i++ ) &#123;</div><div class="line">            <span class="keyword">if</span> (max &lt; arr[i]) &#123;</div><div class="line">                max = arr[i];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        int size = (max) / 10 + 1;</div><div class="line">        Node[] bucket = new Node[size];</div><div class="line"> </div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        <span class="keyword">for</span> ( int i : arr ) &#123;</div><div class="line">            <span class="keyword">if</span> (bucket[i / 10] == null) &#123;</div><div class="line">                bucket[i / 10] = new Node(i);</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                insert(i, bucket[i / 10], bucket, i / 10);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">        </div><div class="line">        startTime = System.currentTimeMillis();</div><div class="line">        int i = 0;</div><div class="line">        <span class="keyword">for</span> ( Node node : bucket ) &#123;</div><div class="line">            Node tem = node;</div><div class="line">            <span class="keyword">while</span> (tem != null) &#123;</div><div class="line">                arr[i] = tem.data;</div><div class="line">                i++;</div><div class="line">                tem = tem.next;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void insert(int i, Node head, Node[] bucket, int point) &#123;</div><div class="line">        Node newNode = new Node(i);</div><div class="line">        Node tem = head;</div><div class="line">        /*</div><div class="line">         * 值大于头结点，替换头结点</div><div class="line">         */</div><div class="line">        <span class="keyword">if</span>(i&lt;head.data)&#123;</div><div class="line">            bucket[point] = newNode;</div><div class="line">            newNode.next = tem;</div><div class="line">            tem.pre=newNode;</div><div class="line">            <span class="built_in">return</span>;</div><div class="line">        &#125;</div><div class="line">        /*</div><div class="line">         * 值大于中间的某个节点</div><div class="line">         */</div><div class="line">        <span class="keyword">while</span> (tem.next != null) &#123;</div><div class="line">            <span class="keyword">if</span> (i &gt;= tem.data) &#123;</div><div class="line">                tem = tem.next;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                newNode.pre = tem.pre;</div><div class="line">                tem.pre.next = newNode;</div><div class="line">                newNode.next = tem;</div><div class="line">                tem.pre = newNode;</div><div class="line">                <span class="built_in">return</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        /*</div><div class="line">         * 链表的最后一个节点的值小于值i</div><div class="line">         */</div><div class="line">        <span class="keyword">if</span> (i &lt; tem.data) &#123;</div><div class="line">           </div><div class="line">                newNode.pre = tem.pre;</div><div class="line">                tem.pre.next = newNode;</div><div class="line">                newNode.next = tem;</div><div class="line">                tem.pre = newNode;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            tem.next = newNode;</div><div class="line">            newNode.pre = tem;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static class Node &#123;</div><div class="line">        Node next;</div><div class="line">        Node pre;</div><div class="line">        int data;</div><div class="line"></div><div class="line">        public Node(int data) &#123;</div><div class="line">            this.data = data;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        int[] arr = new int[10000000];</div><div class="line">        <span class="keyword">for</span> ( int i = 0; i &lt; arr.length; i++ ) &#123;</div><div class="line">            arr[i] = new Random().nextInt(100000000);</div><div class="line">        &#125;</div><div class="line">        System.out.println(1);</div><div class="line">//        int[] arr = &#123; 3, 15, 25, 7, 4, 17, 23 &#125;;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        BucketSort.bucketSort(arr);</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">//        <span class="keyword">for</span> ( int i : arr ) &#123;</div><div class="line">//            System.out.println(i);</div><div class="line">//        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#思想"><span class="toc-text">思想</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现思路"><span class="toc-text">实现思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现代码"><span class="toc-text">实现代码</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/12/11/cas/" class="prev">&larr; 上一篇 CAS</a>
+  
+
+  
+
+  
+    <a href="/2017/12/11/BubbleSort/" class="next">下一篇 冒泡排序 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by 陈锴鑫 using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/images/casper.png">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/chenkaixin01">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/qq_34332035/">
+        
+          CSDN
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

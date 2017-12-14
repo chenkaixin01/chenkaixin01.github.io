@@ -1,0 +1,363 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="陈锴鑫">
+  
+  
+  
+  
+    <meta name="description" content="思想建一个数组，以原数组的值对应新建数组的坐标，新数组的值代表新数组坐标对应的原数组的值出现的次数，然后将新数组按顺序重新填回原数组，构成有序。
+实现思路新建数组的大小以原数组max值+1为容量遍历一遍原数组，将对应信息存入新建数组遍历一遍新数组，将对应信息转为有序的数组存入原数组一亿以内的一亿个随机数排序耗时： 3895毫秒；计数排序适合数据规模较小，数据值较小的排序，计数排序以空间换时间...">
+  
+  <title>计数排序 [ 陈锴鑫 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/12/11/cxf-webService/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        cxf-webService
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/12/11/ConcurrentHashMap/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        ConcurrentHashMap
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="/images/casper.png"/>
+          <div id="homelink">陈锴鑫</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/chenkaixin01">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>计数排序</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-12-11</span>
+      
+        <span id = "post-title-updated">修改于 2017-10-21</span>
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/categories/数据结构/">数据结构</a>
+      
+        
+          /
+        
+        
+        <a href="/categories/数据结构/排序/">排序</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/Java实现/">Java实现</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/数据结构/">数据结构</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/排序/">排序</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h3><p>建一个数组，以原数组的值对应新建数组的坐标，新数组的值代表新数组坐标对应的原数组的值出现的次数，然后将新数组按顺序重新填回原数组，构成有序。</p>
+<h3 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h3><p>新建数组的大小以原数组max值+1为容量<br>遍历一遍原数组，将对应信息存入新建数组<br>遍历一遍新数组，将对应信息转为有序的数组存入原数组<br>一亿以内的一亿个随机数排序耗时： 3895毫秒；<br>计数排序适合数据规模较小，数据值较小的排序，计数排序以空间换时间，当规模太大时空间就不够了<br>计数排序体现的是以空间换时间的思想</p>
+<h3 id="实现代码"><a href="#实现代码" class="headerlink" title="实现代码"></a>实现代码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line">package sort;</div><div class="line"></div><div class="line">import java.util.Random;</div><div class="line"></div><div class="line">public class CountSort &#123;</div><div class="line">    /**</div><div class="line">     * 计数排序：建一个数组，以原数组的值对应新建数组的坐标，新数组的值代表新数组坐标对应的原数组的值出现的次数</div><div class="line">     *        新建数组的大小以原数组max值+1为容量</div><div class="line">     *        遍历一遍原数组，将对应信息存入新建数组</div><div class="line">     *        遍历一遍新数组，将对应信息转为有序的数组存入原数组</div><div class="line">     * 一亿以内的一亿个随机数排序耗时 3895毫秒；</div><div class="line">     * 计数排序适合数据规模较小，数据值较小的排序，计数排序以空间换时间，当规模太大时空间就不够了</div><div class="line">     * @param arr</div><div class="line">     */</div><div class="line">    public static void countSort(int[] arr) &#123;</div><div class="line">        int max = 0;</div><div class="line">        <span class="keyword">for</span> ( int i = 0; i &lt; arr.length; i++ ) &#123;</div><div class="line">            <span class="keyword">if</span> (max &lt; arr[i]) &#123;</div><div class="line">                max = arr[i];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        </div><div class="line">        int[] count = new int[max + 1];</div><div class="line">        <span class="keyword">for</span> ( int i : arr ) &#123;</div><div class="line">            count[i]++;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        </div><div class="line">        int value = 0;</div><div class="line">        <span class="keyword">for</span> ( int i = 0; i &lt; count.length; i++ ) &#123;</div><div class="line">            <span class="keyword">while</span> (count[i] &gt; 0) &#123;</div><div class="line">                arr[value] = i;</div><div class="line">                value++;</div><div class="line">                count[i]--;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        int[] arr = new int[10000000];</div><div class="line">        <span class="keyword">for</span> ( int i = 0; i &lt; arr.length; i++ ) &#123;</div><div class="line">            arr[i] = new Random().nextInt(100000000);</div><div class="line">        &#125;</div><div class="line">        System.out.println(1);</div><div class="line">//        int[] arr = &#123; 8, 9,10000,100000000&#125;;</div><div class="line">        long startTime = System.currentTimeMillis();</div><div class="line">        CountSort.countSort(arr);</div><div class="line">        long endTime = System.currentTimeMillis();</div><div class="line">        System.out.println(endTime - startTime);</div><div class="line">//        <span class="keyword">for</span> ( int i : arr ) &#123;</div><div class="line">//            System.out.println(i);</div><div class="line">//        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#思想"><span class="toc-text">思想</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现思路"><span class="toc-text">实现思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现代码"><span class="toc-text">实现代码</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/12/11/cxf-webService/" class="prev">&larr; 上一篇 cxf-webService</a>
+  
+
+  
+
+  
+    <a href="/2017/12/11/ConcurrentHashMap/" class="next">下一篇 ConcurrentHashMap &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by 陈锴鑫 using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/images/casper.png">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/chenkaixin01">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/qq_34332035/">
+        
+          CSDN
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

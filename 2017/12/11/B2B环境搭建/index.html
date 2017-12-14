@@ -1,0 +1,362 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="陈锴鑫">
+  
+  
+  
+  
+    <meta name="description" content="工具版本或地址操作系统：win10专业版处理器：i5-6200UIDE：eclipse 3.7.2maven:eclipse自带 maven3.0.4svn：eclipse插件 1.75zookeeper：zookeeper 3.4.6，端口为2181redis：安装在公司服务器上，使用公司内部网络访问192.168.1.202
+操作步骤从svn中检出项目并转为maven项目Window -...">
+  
+  <title>B2B环境搭建 [ 陈锴鑫 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/12/11/B2B环境搭建问题/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        B2B环境搭建问题
+      </div>
+    </div>
+  
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="/images/casper.png"/>
+          <div id="homelink">陈锴鑫</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/chenkaixin01">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>B2B环境搭建</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-12-11</span>
+      
+        <span id = "post-title-updated">修改于 2017-11-06</span>
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/categories/实习/">实习</a>
+      
+        
+          /
+        
+        
+        <a href="/categories/实习/亚信/">亚信</a>
+      
+        
+          /
+        
+        
+        <a href="/categories/实习/亚信/环境搭建/">环境搭建</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/实习记录/">实习记录</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/环境/">环境</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="工具版本或地址"><a href="#工具版本或地址" class="headerlink" title="工具版本或地址"></a>工具版本或地址</h3><p>操作系统：win10专业版<br>处理器：i5-6200U<br>IDE：eclipse 3.7.2<br>maven:eclipse自带 maven3.0.4<br>svn：eclipse插件 1.75<br>zookeeper：zookeeper 3.4.6，端口为2181<br>redis：安装在公司服务器上，使用公司内部网络访问192.168.1.202</p>
+<h3 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h3><h4 id="从svn中检出项目并转为maven项目"><a href="#从svn中检出项目并转为maven项目" class="headerlink" title="从svn中检出项目并转为maven项目"></a>从svn中检出项目并转为maven项目</h4><p>Window -&gt; show view  -&gt; svn资源库，<br>右键 -&gt; 新建 -&gt; 填入url：svn://123.57.51.100/projectDev/helios-src<br>检出项目helios-center和helios-common还有helios-b2b下的web-mall, console-admin,helios-com-service<br>将以上项目转为maven项目</p>
+<h4 id="将项目中的jdk版本转为1-6，每个都要检查一遍；再检查每个项目是否都有maven依赖没有要添加"><a href="#将项目中的jdk版本转为1-6，每个都要检查一遍；再检查每个项目是否都有maven依赖没有要添加" class="headerlink" title="将项目中的jdk版本转为1.6，每个都要检查一遍；再检查每个项目是否都有maven依赖没有要添加"></a>将项目中的jdk版本转为1.6，每个都要检查一遍；再检查每个项目是否都有maven依赖没有要添加</h4><h5 id="Jdk"><a href="#Jdk" class="headerlink" title="Jdk"></a>Jdk</h5><p>在项目上右键 -&gt; Build path -&gt; Libraries- &gt; 选中JRE -&gt; Edit<br> 在Execution environment中选择1.6</p>
+<h5 id="Maven"><a href="#Maven" class="headerlink" title="Maven"></a>Maven</h5><p>Build path -&gt; Libraries -&gt; add Library -&gt; Maven Managed Dependencies -&gt; next  -&gt; 点击Maven Project setting  -&gt; 填入 Maven Dependencies-&gt;apply</p>
+<h4 id="将从svn中检出的每个项目打包"><a href="#将从svn中检出的每个项目打包" class="headerlink" title="将从svn中检出的每个项目打包"></a>将从svn中检出的每个项目打包</h4><p>右键 -&gt; run as -&gt; maven build -&gt; 在goals中填入命令行” install -D maven.javadoc.skip=true ” 勾选‘offine’ ‘update snapshot’ ‘ skip Test -&gt;apply</p>
+<h4 id="在eco-center中找到all-–-deploy-转为maven项目并打包"><a href="#在eco-center中找到all-–-deploy-转为maven项目并打包" class="headerlink" title="在eco-center中找到all – deploy 转为maven项目并打包"></a>在eco-center中找到all – deploy 转为maven项目并打包</h4><h4 id="将all-deploy中打成的tar包复制到项目空间，解压到项目空间中"><a href="#将all-deploy中打成的tar包复制到项目空间，解压到项目空间中" class="headerlink" title="将all-deploy中打成的tar包复制到项目空间，解压到项目空间中"></a>将all-deploy中打成的tar包复制到项目空间，解压到项目空间中</h4><p><img src="/images/B2B-all-deploy.png" alt="B2B-all-deploy:复制"><br><img src="/images/B2B-all-deploy-解压.png" alt="B2B-all-deploy:解压"></p>
+<h4 id="修改zookeeper，helios-center-all-deploy中的配置文件"><a href="#修改zookeeper，helios-center-all-deploy中的配置文件" class="headerlink" title="修改zookeeper，helios-center-all-deploy中的配置文件"></a>修改zookeeper，helios-center-all-deploy中的配置文件</h4><h5 id="Zookeeper："><a href="#Zookeeper：" class="headerlink" title="Zookeeper："></a>Zookeeper：</h5><p>找到conf文件夹，打开里面的zoo.cfg<br><img src="/images/zookeeper-配置.png" alt="B2B-zookeeper：配置"></p>
+<h5 id="all-deploy"><a href="#all-deploy" class="headerlink" title="all-deploy"></a>all-deploy</h5><p>将南博哥发的 <a href="http://pan.baidu.com/s/1nvFrg4D" target="_blank" rel="external">helios-config.properties</a> 复制到b2b_workspace\helios-center-all-deploy-1.1.0-SNAPSHOT\conf 中<br>修改conf中的dubbo.properties文件<br><img src="/images/B2B-all-deploy-dubbo.png" alt="B2B-all-deploy-dubbo"></p>
+<h4 id="修改项目-helios-b2b-web-mall的dubbo-properies和helios-config-properies"><a href="#修改项目-helios-b2b-web-mall的dubbo-properies和helios-config-properies" class="headerlink" title="修改项目/helios-b2b-web-mall的dubbo.properies和helios-config.properies."></a>修改项目/helios-b2b-web-mall的dubbo.properies和helios-config.properies.</h4><h5 id="dubbo-properties"><a href="#dubbo-properties" class="headerlink" title="dubbo.properties"></a>dubbo.properties</h5><p><img src="/images/B2B-web-mall-dubbo.png" alt="B2B-web-mall-dubbo"></p>
+<h5 id="helios-config-properties"><a href="#helios-config-properties" class="headerlink" title="helios-config.properties"></a>helios-config.properties</h5><p><img src="/images/B2B-web-mall-helios-config.png" alt="B2B-web-mall-helio-config"></p>
+<h4 id="起C"><a href="#起C" class="headerlink" title="起C"></a>起C</h4><h5 id="zookeeper"><a href="#zookeeper" class="headerlink" title="zookeeper"></a>zookeeper</h5><p>打开zookeeper-3.4.6\bin\ zkServer.cmd<br><img src="/images/B2B-C-zookeeper.png" alt="B2B-C-zookeeper"></p>
+<h5 id="helios-center-all-deploy"><a href="#helios-center-all-deploy" class="headerlink" title="helios-center-all-deploy"></a>helios-center-all-deploy</h5><p>打开helios-center-all-deploy-1.1.0-SNAPSHOT\bin\start.bat<br><img src="/images/B2B-C-helios-center-all-deploy.png" alt="B2B-C-helios-center-all-deploy"></p>
+<h4 id="启动tomcat"><a href="#启动tomcat" class="headerlink" title="启动tomcat"></a>启动tomcat</h4><p>谢谢南博哥和宏宇的耐心指导</p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#工具版本或地址"><span class="toc-text">工具版本或地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#操作步骤"><span class="toc-text">操作步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#从svn中检出项目并转为maven项目"><span class="toc-text">从svn中检出项目并转为maven项目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#将项目中的jdk版本转为1-6，每个都要检查一遍；再检查每个项目是否都有maven依赖没有要添加"><span class="toc-text">将项目中的jdk版本转为1.6，每个都要检查一遍；再检查每个项目是否都有maven依赖没有要添加</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Jdk"><span class="toc-text">Jdk</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Maven"><span class="toc-text">Maven</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#将从svn中检出的每个项目打包"><span class="toc-text">将从svn中检出的每个项目打包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在eco-center中找到all-–-deploy-转为maven项目并打包"><span class="toc-text">在eco-center中找到all – deploy 转为maven项目并打包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#将all-deploy中打成的tar包复制到项目空间，解压到项目空间中"><span class="toc-text">将all-deploy中打成的tar包复制到项目空间，解压到项目空间中</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#修改zookeeper，helios-center-all-deploy中的配置文件"><span class="toc-text">修改zookeeper，helios-center-all-deploy中的配置文件</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Zookeeper："><span class="toc-text">Zookeeper：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#all-deploy"><span class="toc-text">all-deploy</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#修改项目-helios-b2b-web-mall的dubbo-properies和helios-config-properies"><span class="toc-text">修改项目/helios-b2b-web-mall的dubbo.properies和helios-config.properies.</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#dubbo-properties"><span class="toc-text">dubbo.properties</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#helios-config-properties"><span class="toc-text">helios-config.properties</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#起C"><span class="toc-text">起C</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#zookeeper"><span class="toc-text">zookeeper</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#helios-center-all-deploy"><span class="toc-text">helios-center-all-deploy</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#启动tomcat"><span class="toc-text">启动tomcat</span></a></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/12/11/B2B环境搭建问题/" class="prev">&larr; 上一篇 B2B环境搭建问题</a>
+  
+
+  
+
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by 陈锴鑫 using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/images/casper.png">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/chenkaixin01">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/qq_34332035/">
+        
+          CSDN
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

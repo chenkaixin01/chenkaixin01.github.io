@@ -1,0 +1,570 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="陈锴鑫">
+  
+  
+  
+  
+    <meta name="description" content="User表字段解析
+
+
+字段
+解释
+
+
+
+
+Select_priv
+确定用户是否可以通过SELECT命令选择数据
+
+
+Insert_priv
+确定用户是否可以通过INSERT命令插入数据
+
+
+Update_priv
+确定用户是否可以通过UPDATE命令修改现有数据
+
+
+Delete_priv
+确定用户是否可以通过DELETE命令删除现有数据
+
+
+Create_priv
+确定用户是否可以创建新...">
+  
+  <title>MySQL权限赋予与User表字段解析 [ 陈锴鑫 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2017/12/14/MySQL安装/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        MySQL5.7安装过程
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="/images/casper.png"/>
+          <div id="homelink">陈锴鑫</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/chenkaixin01">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>MySQL权限赋予与User表字段解析</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-12-14</span>
+      
+        <span id = "post-title-updated">修改于 2017-12-14</span>
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/categories/数据库/">数据库</a>
+      
+        
+          /
+        
+        
+        <a href="/categories/数据库/MySQL/">MySQL</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/数据库/">数据库</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/MySQL/">MySQL</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/权限/">权限</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/User表/">User表</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="User表字段解析"><a href="#User表字段解析" class="headerlink" title="User表字段解析"></a>User表字段解析</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">字段</th>
+<th style="text-align:left">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Select_priv</td>
+<td style="text-align:left">确定用户是否可以通过SELECT命令选择数据</td>
+</tr>
+<tr>
+<td style="text-align:left">Insert_priv</td>
+<td style="text-align:left">确定用户是否可以通过INSERT命令插入数据</td>
+</tr>
+<tr>
+<td style="text-align:left">Update_priv</td>
+<td style="text-align:left">确定用户是否可以通过UPDATE命令修改现有数据</td>
+</tr>
+<tr>
+<td style="text-align:left">Delete_priv</td>
+<td style="text-align:left">确定用户是否可以通过DELETE命令删除现有数据</td>
+</tr>
+<tr>
+<td style="text-align:left">Create_priv</td>
+<td style="text-align:left">确定用户是否可以创建新的数据库和表</td>
+</tr>
+<tr>
+<td style="text-align:left">Drop_priv</td>
+<td style="text-align:left">确定用户是否可以删除现有数据库和表</td>
+</tr>
+<tr>
+<td style="text-align:left">Reload_priv</td>
+<td style="text-align:left">确定用户是否可以执行刷新和重新加载MySQL所用各种内部缓存的特定命令，包括日志、权限、主机、查询和表</td>
+</tr>
+<tr>
+<td style="text-align:left">Shutdown_priv</td>
+<td style="text-align:left">确定用户是否可以关闭MySQL服务器</td>
+<td>在将此权限提供给root账户之外的任何用户时，都应当非常谨慎</td>
+</tr>
+<tr>
+<td style="text-align:left">Process_priv</td>
+<td style="text-align:left">确定用户是否可以通过SHOW PROCESSLIST命令查看其他用户的进程</td>
+</tr>
+<tr>
+<td style="text-align:left">File_priv</td>
+<td style="text-align:left">确定用户是否可以执行SELECT INTO OUTFILE和LOAD DATA INFILE命令</td>
+</tr>
+<tr>
+<td style="text-align:left">Grant_priv</td>
+<td style="text-align:left">确定用户是否可以将已经授予给该用户自己的权限再授予其他用户</td>
+<td>例如，如果用户可以插入、选择和删除foo数据库中的信息，并且授予了GRANT权限，则该用户就可以将其任何或全部权限授予系统中的任何其他用户</td>
+</tr>
+<tr>
+<td style="text-align:left">References_priv</td>
+<td style="text-align:left">目前只是某些未来功能的占位符；现在没有作用</td>
+</tr>
+<tr>
+<td style="text-align:left">Index_priv</td>
+<td style="text-align:left">确定用户是否可以创建和删除表索引</td>
+</tr>
+<tr>
+<td style="text-align:left">Alter_priv</td>
+<td style="text-align:left">确定用户是否可以重命名和修改表结构</td>
+</tr>
+<tr>
+<td style="text-align:left">Show_db_priv</td>
+<td style="text-align:left">确定用户是否可以查看服务器上所有数据库的名字，包括用户拥有足够访问权限的数据库</td>
+<td>可以考虑对所有用户禁用这个权限，除非有特别不可抗拒的原因</td>
+</tr>
+<tr>
+<td style="text-align:left">Super_priv</td>
+<td style="text-align:left">确定用户是否可以执行某些强大的管理功能，例如通过KILL命令删除用户进程，使用SET </td>
+</tr>
+<tr>
+<td style="text-align:left">GLOBAL</td>
+<td style="text-align:left">修改全局MySQL变量，执行关于复制和日志的各种命令</td>
+</tr>
+<tr>
+<td style="text-align:left">Create_tmp_table_priv</td>
+<td style="text-align:left">确定用户是否可以创建临时表</td>
+</tr>
+<tr>
+<td style="text-align:left">Lock_tables_priv</td>
+<td style="text-align:left">确定用户是否可以使用LOCK TABLES命令阻止对表的访问/修改</td>
+</tr>
+<tr>
+<td style="text-align:left">Execute_priv</td>
+<td style="text-align:left">确定用户是否可以执行存储过程</td>
+<td>此权限只在MySQL 5.0及更高版本中有意义</td>
+</tr>
+<tr>
+<td style="text-align:left">Repl_slave_priv</td>
+<td style="text-align:left">确定用户是否可以读取用于维护复制数据库环境的二进制日志文件</td>
+<td>此用户位于主系统中，有利于主机和客户机之间的通信</td>
+</tr>
+<tr>
+<td style="text-align:left">Repl_client_priv</td>
+<td style="text-align:left">确定用户是否可以确定复制从服务器和主服务器的位置</td>
+</tr>
+<tr>
+<td style="text-align:left">Create_view_priv</td>
+<td style="text-align:left">确定用户是否可以创建视图</td>
+<td>此权限只在MySQL 5.0及更高版本中有意义</td>
+</tr>
+<tr>
+<td style="text-align:left">Show_view_priv</td>
+<td style="text-align:left">确定用户是否可以查看视图或了解视图如何执行</td>
+<td>此权限只在MySQL 5.0及更高版本中有意义</td>
+</tr>
+<tr>
+<td style="text-align:left">Create_routine_priv</td>
+<td style="text-align:left">确定用户是否可以更改或放弃存储过程和函数</td>
+</tr>
+<tr>
+<td style="text-align:left">Alter_routine_priv</td>
+<td style="text-align:left">确定用户是否可以修改或删除存储函数及函数</td>
+</tr>
+<tr>
+<td style="text-align:left">Create_user_priv</td>
+<td style="text-align:left">确定用户是否可以执行CREATE USER命令，这个命令用于创建新的MySQL账户</td>
+</tr>
+<tr>
+<td style="text-align:left">Event_priv</td>
+<td style="text-align:left">确定用户能否创建、修改和删除事件</td>
+</tr>
+<tr>
+<td style="text-align:left">Trigger_priv</td>
+<td style="text-align:left">确定用户能否创建和删除触发器</td>
+</tr>
+<tr>
+<td style="text-align:left">ssl_type</td>
+<td style="text-align:left">支持ssl标准加密安全字段</td>
+</tr>
+<tr>
+<td style="text-align:left">ssl_cipher</td>
+<td style="text-align:left">支持ssl标准加密安全字段</td>
+</tr>
+<tr>
+<td style="text-align:left">x509_issuer</td>
+<td style="text-align:left">支持x509标准字段</td>
+</tr>
+<tr>
+<td style="text-align:left">x509_subject</td>
+<td style="text-align:left">支持x509标准字段</td>
+</tr>
+<tr>
+<td style="text-align:left">max_questions</td>
+<td style="text-align:left">每小时允许执行多少次查询</td>
+</tr>
+<tr>
+<td style="text-align:left">max_updates:</td>
+<td style="text-align:left">每小时可以执行多少次更新  ：0表示无限制</td>
+</tr>
+<tr>
+<td style="text-align:left">max_connections</td>
+<td style="text-align:left">每小时可以建立的多少次连接：0表示无限制</td>
+</tr>
+<tr>
+<td style="text-align:left">max_user_connections</td>
+<td style="text-align:left">单用户可以同时具有的连接数：0表示无限制</td>
+</tr>
+<tr>
+<td style="text-align:left">plugin</td>
+<td style="text-align:left">如果该字段为空则不能使用，默认值为mysql_native_password</td>
+</tr>
+<tr>
+<td style="text-align:left">authentication_string</td>
+<td style="text-align:left">存储密码的字段；</td>
+</tr>
+<tr>
+<td style="text-align:left">password_expired</td>
+<td style="text-align:left">开启密码有时效限制，默认是无限制的</td>
+</tr>
+<tr>
+<td style="text-align:left">password_lifetime</td>
+<td style="text-align:left">密码的有效期</td>
+</tr>
+<tr>
+<td style="text-align:left">password_last_changed</td>
+<td style="text-align:left">最后一次改密码的时间</td>
+</tr>
+<tr>
+<td style="text-align:left">account_locked</td>
+<td style="text-align:left">锁定或解锁用户</td>
+</tr>
+</tbody>
+</table>
+<h3 id="授权"><a href="#授权" class="headerlink" title="授权"></a>授权</h3><p>创建用户：<br><code>create user username@localhost identified by &#39;password&#39;;</code><br>授予用户对所有数据库的权限<br><code>grant select on *.* to username@&#39;localhost&#39; identified by &#39;password&#39;;</code><br>查看用户的权限<br><code>show grants for username@localhost;</code></p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#User表字段解析"><span class="toc-text">User表字段解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#授权"><span class="toc-text">授权</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2017/12/14/MySQL安装/" class="next">下一篇 MySQL5.7安装过程 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by 陈锴鑫 using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/images/casper.png">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/chenkaixin01">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/qq_34332035/">
+        
+          CSDN
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

@@ -1,0 +1,365 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="陈锴鑫">
+  
+  
+  
+  
+    <meta name="description" content="这是个人写的第一篇博客，有些言语不顺的地方，请见谅，有讲的不对的地方，请指点下。
+
+思想在讲顺序表之前要说线性表，线性表包含很多，顺序表，链表，队列，栈等都属于线性表。
+线性表的定义如下：线性表(linear list) 是n个类型相同的数据元素的有限序列。首先：线性表存储的都是同一类型的的元素，例如：int，char等数据类型，也可以student类型；其次：是有限的，我的理解是线性表的容...">
+  
+  <title>顺序表 [ 陈锴鑫 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/12/14/MySQL安装/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        MySQL5.7安装过程
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/12/11/队列/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        队列
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="/images/casper.png"/>
+          <div id="homelink">陈锴鑫</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/chenkaixin01">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>顺序表</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-12-11</span>
+      
+        <span id = "post-title-updated">修改于 2017-08-25</span>
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/categories/数据结构/">数据结构</a>
+      
+        
+          /
+        
+        
+        <a href="/categories/数据结构/线性表/">线性表</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/Java实现/">Java实现</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/数据结构/">数据结构</a>
+      
+      </span>
+      
+    </p>
+    
+    <p>这是个人写的第一篇博客，有些言语不顺的地方，请见谅，有讲的不对的地方，请指点下。</p>
+<hr>
+<h3 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h3><p>在讲顺序表之前要说线性表，线性表包含很多，顺序表，链表，队列，栈等都属于线性表。</p>
+<p>线性表的定义如下：线性表(linear list) 是n个类型相同的数据元素的有限序列。首先：线性表存储的都是同一类型的的元素，例如：int，char等数据类型，也可以student类型；其次：是有限的，我的理解是线性表的容量受限于硬件条件，即使线性表可以根据元素的多少进行自由扩容，但数据的最终还是写入硬件中。然后是序列：百度上解释“在数学上，序列是被排成一列的对象（或事件）；这样每个元素不是在其他元素之前，就是在其他元素之后。这里，元素之间的顺序非常重要”这个解释已经是表现出线性表线性的特点，线性表之间存在着序偶关系，除了表头只有直接后驱，表尾只有直接前驱，其他元素都同时存在直接前驱与直接后驱。线性表到此为止。</p>
+<p>顺序表：是线性表中的一种子类型，用Java的话来说，说顺序表继承/实现了线性表。同时顾名知意，顺序表是用一组地址连续的存储单元存储的，我的理解是像数组，同时我也是用数组来实现顺序表的；</p>
+<p>顺序表的实现：</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><h4 id="第一：写接口"><a href="#第一：写接口" class="headerlink" title="第一：写接口"></a>第一：写接口</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">public interface ArrayList&lt;T&gt; &#123;</div><div class="line">        </div><div class="line">        </div><div class="line">        /**</div><div class="line">         * 清空顺序表</div><div class="line">         * @<span class="built_in">return</span> 返回一个空的数组</div><div class="line">         */</div><div class="line">        T[] enptyList();</div><div class="line">        /**</div><div class="line">         * 往顺序表中添加数据</div><div class="line">         */</div><div class="line">        void add(T t);</div><div class="line">        </div><div class="line">        /**</div><div class="line">         * 在顺序表中第i个元素后插入一个元素</div><div class="line">         * @<span class="built_in">return</span>  加入成功返回加入元素后的以数组返回顺序表内的元素</div><div class="line">         */</div><div class="line">        T[] insertData(int i,T t);</div><div class="line">        /**</div><div class="line">         * 从顺序表中删除第i个元素</div><div class="line">         * @<span class="built_in">return</span>  删除后返回被删除元素</div><div class="line">         */</div><div class="line">        T deleteData(int i);</div><div class="line">        /**</div><div class="line">         * 查询顺序表内所有数据，以集合存储</div><div class="line">         * @<span class="built_in">return</span> 返回以数组返回顺序表内的元素</div><div class="line">         */</div><div class="line">        T[] selectAll();</div><div class="line">        /**</div><div class="line">         * 根据下标找元素</div><div class="line">         * @<span class="built_in">return</span> 一个元素</div><div class="line">         */</div><div class="line">        T selectData(int i);</div><div class="line">        /**</div><div class="line">         * 根据元素找到元素的位置</div><div class="line">         * @<span class="built_in">return</span> int </div><div class="line">         */</div><div class="line">        int selectIndex(T t);</div><div class="line">        /**</div><div class="line">         * 根据下标将该元素替换为参数元素</div><div class="line">         * @<span class="built_in">return</span> 返回被替换元素</div><div class="line">         */</div><div class="line">        T replaceData(int i,T t);</div><div class="line">        /**</div><div class="line">         * 顺序表的实际长度</div><div class="line">         * @<span class="built_in">return</span> int</div><div class="line">         */</div><div class="line">        int lenthList();</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h4 id="第二：就是实现接口了："><a href="#第二：就是实现接口了：" class="headerlink" title="第二：就是实现接口了："></a>第二：就是实现接口了：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div></pre></td><td class="code"><pre><div class="line">public class ArrayListImpl implements ArrayList&lt;Integer&gt; &#123;</div><div class="line">    private Integer[] data = null;</div><div class="line">    private int size;</div><div class="line">    private int length = 0;</div><div class="line">    private <span class="function"><span class="title">ArrayListImpl</span></span>() &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 通过构造函数创建数组来存储顺序表的数据</div><div class="line">     * </div><div class="line">     * @param size</div><div class="line">     */</div><div class="line">    public ArrayListImpl(int size) &#123;</div><div class="line">        this.size = size;</div><div class="line">    this.data = new Integer[this.size];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Integer[] <span class="function"><span class="title">enptyList</span></span>() &#123;</div><div class="line">    this.data = null; // 直接将数组置换为null；第一次是下，理论上应该可以</div><div class="line">        <span class="built_in">return</span> this.data;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void add(Integer obj) &#123;</div><div class="line">        <span class="keyword">if</span>(this.length&lt;this.size)&#123;</div><div class="line">            this.data[this.length] = obj; // 顺序表的初始长度为0；当加入一个元素是长度+1</div><div class="line">            this.length++;</div><div class="line">        &#125;<span class="keyword">else</span>&#123;</div><div class="line">            System.out.println(<span class="string">"表已满"</span>);</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Integer[] insertData(int i,Integer obj) &#123;</div><div class="line">       <span class="keyword">if</span>(this.length&lt;this.size)&#123;</div><div class="line">           int j = this.length;</div><div class="line">           <span class="keyword">while</span>(j&gt;i)&#123;</div><div class="line">                       this.data[j] = this.data[j-1];</div><div class="line">               j--;</div><div class="line">               &#125;</div><div class="line">           this.data [i] = obj;</div><div class="line">           this.length ++;</div><div class="line">       &#125;<span class="keyword">else</span>&#123;</div><div class="line">           System.out.println(<span class="string">"表已满"</span>);</div><div class="line">       &#125;</div><div class="line">        </div><div class="line">        <span class="built_in">return</span> this.data;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Integer deleteData(int i) &#123;</div><div class="line">        Integer obj = null ;</div><div class="line"></div><div class="line">        <span class="keyword">if</span>(this.length != 0)&#123;</div><div class="line">            <span class="keyword">if</span>(0 &lt;= i &amp;&amp; i&lt;this.length-1)&#123;</div><div class="line">                obj = this.data[i];</div><div class="line">                <span class="keyword">for</span> ( ; i &lt; data.length-1; i++ ) &#123;</div><div class="line">                    this.data[i] = this.data[i+1];</div><div class="line">                &#125;</div><div class="line">                this.data[this.length-1] = null;</div><div class="line">                this.length--;</div><div class="line">            &#125;<span class="keyword">else</span> &#123;</div><div class="line">                System.out.println(<span class="string">"该元素不在范围内"</span>);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            System.out.println(<span class="string">"顺序表为空"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="built_in">return</span> obj;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Integer[] <span class="function"><span class="title">selectAll</span></span>() &#123;</div><div class="line">        // TODO Auto-generated method stub</div><div class="line">        <span class="built_in">return</span> this.data;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Integer selectData(int i) &#123; </div><div class="line">        <span class="built_in">return</span> this.data[i];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int selectIndex(Integer obj) &#123;</div><div class="line">        <span class="keyword">for</span>(int i=0;i&lt;this.length;i++)&#123;</div><div class="line">            <span class="keyword">if</span>(this.data[i] == obj)&#123;</div><div class="line">                <span class="built_in">return</span> i;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="built_in">return</span> -1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Integer replaceData(int i,Integer obj) &#123;</div><div class="line">        Integer rep ;</div><div class="line">        <span class="keyword">if</span>(this.length != 0)&#123;</div><div class="line">            <span class="keyword">if</span>(0 &lt;= i &amp;&amp; i&lt;this.length-1)&#123;</div><div class="line">                rep = this.data[i];</div><div class="line">                this.data[i] = obj;</div><div class="line">                <span class="built_in">return</span> rep;</div><div class="line">            &#125;<span class="keyword">else</span> &#123;</div><div class="line">                System.out.println(<span class="string">"该元素不在范围内"</span>);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            System.out.println(<span class="string">"顺序表为空"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="built_in">return</span> null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">     public int <span class="function"><span class="title">lenthList</span></span>() &#123;</div><div class="line">        // TODO Auto-generated method stub</div><div class="line">        <span class="built_in">return</span> this.length;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="顺序表实现后感想："><a href="#顺序表实现后感想：" class="headerlink" title="顺序表实现后感想："></a>顺序表实现后感想：</h3><p>做了个东西总会有些想法，首先就是整个顺序表都是用数组来实现的，而且没有复杂的逻辑，为什么要费这功夫；这就会想到jdk的ArrayList，不能说这个顺序表是实现了ArrayLIst，起码我认为ArrayList的本质上就是一个顺序表，只不过功能更加齐全，代码结构更优秀的一个实现，在平时的使用中ArrayList的使用频率完全不低于数组，想了想，想法就这些。</p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#思想"><span class="toc-text">思想</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现"><span class="toc-text">实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#第一：写接口"><span class="toc-text">第一：写接口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#第二：就是实现接口了："><span class="toc-text">第二：就是实现接口了：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#顺序表实现后感想："><span class="toc-text">顺序表实现后感想：</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/12/14/MySQL安装/" class="prev">&larr; 上一篇 MySQL5.7安装过程</a>
+  
+
+  
+
+  
+    <a href="/2017/12/11/队列/" class="next">下一篇 队列 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by 陈锴鑫 using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/images/casper.png">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/chenkaixin01">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/qq_34332035/">
+        
+          CSDN
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
